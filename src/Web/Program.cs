@@ -2,6 +2,18 @@ using IOMate.Api.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCorsPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 // Add services to the container.
 builder.AddKeyVaultIfConfigured();
 builder.AddApplicationServices();
@@ -13,6 +25,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("DevCorsPolicy");
     await app.InitialiseDatabaseAsync();
 }
 else
