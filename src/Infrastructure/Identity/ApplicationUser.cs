@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace IOMate.Api.Infrastructure.Identity;
-
-public class ApplicationUser : IdentityUser
+namespace IOMate.Api.Infrastructure.Identity
 {
+    public class ApplicationUser : IdentityUser
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+    }
 }
