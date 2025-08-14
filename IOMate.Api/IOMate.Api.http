@@ -1,0 +1,6 @@
+@IOMate.Api_HostAddress = http://localhost:5208
+
+GET {{IOMate.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
