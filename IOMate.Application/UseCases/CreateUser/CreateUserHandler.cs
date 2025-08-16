@@ -6,7 +6,7 @@ using MediatR;
 
 namespace IOMate.Application.UseCases.CreateUser
 {
-    internal class CreateUserHandler : IRequestHandler<CreateUserRequestDto, CreateUserResponseDto>
+    public class CreateUserHandler : IRequestHandler<CreateUserRequestDto, CreateUserResponseDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;

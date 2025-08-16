@@ -1,6 +1,7 @@
 using IOMate.Application.UseCases.CreateUser;
 using IOMate.Application.UseCases.GetAllUsers;
 using IOMate.Application.UseCases.UpdateUser;
+using IOMate.Application.UseCases.DeleteUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

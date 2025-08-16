@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using IOMate.Application.UseCases.CreateUser;
 using IOMate.Domain.Interfaces;
 using MediatR;
 
