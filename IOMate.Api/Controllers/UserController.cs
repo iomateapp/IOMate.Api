@@ -31,10 +31,10 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<UpdateUserResponseDto>>
-        Update(Guid id, UpdateUserRequestDto request, CancellationToken cancellationToken)
+    public async Task<ActionResult<UpdateUserResponseDto>> Update(Guid id, UpdateUserRequestDto request, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(request, cancellationToken);
+        var command = new UpdateUserCommand(id, request);
+        var response = await _mediator.Send(command, cancellationToken);
         return Ok(response);
     }
 

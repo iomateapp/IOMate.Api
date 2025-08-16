@@ -2,10 +2,9 @@
 using IOMate.Domain.Interfaces;
 using MediatR;
 
-
 namespace IOMate.Application.UseCases.UpdateUser
 {
-    public class UpdateUserHandler : IRequestHandler<UpdateUserRequestDto, UpdateUserResponseDto>
+    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UpdateUserResponseDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
@@ -18,16 +17,16 @@ namespace IOMate.Application.UseCases.UpdateUser
             _userRepository = userRepository;
             _mapper = mapper;
         }
-        public async Task<UpdateUserResponseDto> Handle(UpdateUserRequestDto command,
+        public async Task<UpdateUserResponseDto> Handle(UpdateUserCommand command,
                                                      CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetByIdAsync(command.Id, cancellationToken);
 
             if (user is null) return default;
 
-            user.FirstName = command.FirstName;
-            user.LastName = command.LastName;
-            user.Email = command.Email;
+            user.FirstName = command.Request.FirstName;
+            user.LastName = command.Request.LastName;
+            user.Email = command.Request.Email;
 
             _userRepository.Update(user);
 
