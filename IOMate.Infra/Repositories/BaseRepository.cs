@@ -32,6 +32,20 @@ namespace IOMate.Infra.Repositories
             Context.Remove(entity);
         }
 
+        public async Task<List<T>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
+        {
+            return await Context.Set<T>()
+                .OrderBy(u => u.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<int> CountAsync(CancellationToken cancellationToken)
+        {
+            return await Context.Set<T>().CountAsync(cancellationToken);
+        }
+
         public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await Context.Set<T>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);

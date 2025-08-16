@@ -9,5 +9,7 @@ namespace IOMate.Domain.Interfaces
         void Delete(T entity);
         Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
         Task<List<T>?> GetAllAsync(CancellationToken cancellationToken);
+        Task<List<T>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
+        Task<int> CountAsync(CancellationToken cancellationToken);
     }
 }
