@@ -5,7 +5,7 @@ namespace IOMate.Application.UseCases.CreateUser
 {
     public sealed class CreateUserMapper : Profile
     {
-        public CreateUserMapper() 
+        public CreateUserMapper()
         {
             CreateMap<CreateUserRequestDto, User>();
             CreateMap<User, CreateUserResponseDto>();

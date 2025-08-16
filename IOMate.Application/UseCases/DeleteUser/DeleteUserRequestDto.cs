@@ -2,5 +2,5 @@
 
 namespace IOMate.Application.UseCases.CreateUser
 {
-    public sealed record DeleteUserRequestDto(Guid Id)  : IRequest<DeleteUserResponseDto>;
+    public sealed record DeleteUserRequestDto(Guid Id) : IRequest<DeleteUserResponseDto>;
 }

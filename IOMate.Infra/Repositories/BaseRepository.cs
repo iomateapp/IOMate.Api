@@ -14,20 +14,20 @@ namespace IOMate.Infra.Repositories
             Context = context;
         }
 
-        public void Add(T entity) 
+        public void Add(T entity)
         {
             entity.DateCreated = DateTime.UtcNow;
             Context.Add(entity);
         }
-        
-        public void Update(T entity) 
-        { 
+
+        public void Update(T entity)
+        {
             entity.DateModified = DateTime.UtcNow;
             Context.Update(entity);
         }
 
         public void Delete(T entity)
-        { 
+        {
             entity.DateDeleted = DateTime.UtcNow;
             Context.Remove(entity);
         }
