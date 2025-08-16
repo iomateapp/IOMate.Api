@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace IOMate.Application
+namespace IOMate.Application.Extensions
 {
     public static class ServiceExtensions
     {

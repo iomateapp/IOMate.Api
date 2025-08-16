@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IOMate.Infra
+namespace IOMate.Infra.Extensions
 {
     public static class ServiceExtensions
     {

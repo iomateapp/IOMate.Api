@@ -1,11 +1,13 @@
-using IOMate.Infra;
-using IOMate.Application;
+using IOMate.Api.Extensions;
+using IOMate.Application.Extensions;
 using IOMate.Infra.Context;
+using IOMate.Infra.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureInfra(builder.Configuration);
 builder.Services.ConfigureApplication();
+builder.Services.ConfigureCorsPolicy();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
