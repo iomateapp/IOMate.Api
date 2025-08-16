@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using IOMate.Domain.Interfaces;
+using IOMate.Application.Shared.Exceptions;
 using IOMate.Domain.Entities;
+using IOMate.Domain.Interfaces;
 using MediatR;
 
 namespace IOMate.Application.UseCases.CreateUser
@@ -20,6 +21,10 @@ namespace IOMate.Application.UseCases.CreateUser
 
         public async Task<CreateUserResponseDto> Handle(CreateUserRequestDto request, CancellationToken cancellationToken)
         {
+            var existingUser = await _userRepository.GetByEmail(request.Email, cancellationToken);
+            if (existingUser != null)
+                throw new BadRequestException($"O e-mail '{request.Email}' já está em uso.");
+
             var user = _mapper.Map<User>(request);
             _userRepository.Add(user);
             await _unitOfWork.Commit(cancellationToken);

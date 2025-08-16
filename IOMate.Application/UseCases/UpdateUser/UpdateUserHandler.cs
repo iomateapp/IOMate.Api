@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using IOMate.Domain.Interfaces;
 using MediatR;
-
+using IOMate.Application.Shared.Exceptions;
+    
 namespace IOMate.Application.UseCases.UpdateUser
 {
     public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UpdateUserResponseDto>
@@ -23,6 +24,10 @@ namespace IOMate.Application.UseCases.UpdateUser
             var user = await _userRepository.GetByIdAsync(command.Id, cancellationToken);
 
             if (user is null) return default;
+
+            var existingUser = await _userRepository.GetByEmail(command.Request.Email, cancellationToken);
+            if (existingUser != null && existingUser.Id != user.Id)
+                throw new BadRequestException($"O e-mail '{command.Request.Email}' já está em uso.");
 
             user.FirstName = command.Request.FirstName;
             user.LastName = command.Request.LastName;
