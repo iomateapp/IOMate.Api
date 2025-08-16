@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IOMate.Application.Services
 {
-    internal class ServiceExtentions
+    internal class HasherService
     {
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using IOMate.Application.Services;
 using IOMate.Application.Shared.Behavior;
 using IOMate.Domain.Interfaces;
 using MediatR;
@@ -15,6 +16,7 @@ namespace IOMate.Application.Extensions
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
         }
     }
 }

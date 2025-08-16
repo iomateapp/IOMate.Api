@@ -9,6 +9,7 @@ namespace IOMate.Application.UseCases.CreateUser
             RuleFor(u => u.Email).NotEmpty().MaximumLength(50).EmailAddress();
             RuleFor(u => u.FirstName).NotEmpty().MinimumLength(3).MaximumLength(50);
             RuleFor(u => u.LastName).NotEmpty().MinimumLength(3).MaximumLength(50);
+            RuleFor(u => u.Password).NotEmpty().MinimumLength(6);
         }
     }
 }

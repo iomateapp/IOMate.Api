@@ -11,12 +11,15 @@ namespace IOMate.Application.UseCases.CreateUser
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public CreateUserHandler(IUnitOfWork unitOfWork, IUserRepository userRepository, IMapper mapper)
+        public CreateUserHandler(IUnitOfWork unitOfWork, IUserRepository userRepository, 
+            IMapper mapper, IPasswordHasher passwordHasher)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _mapper = mapper;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<CreateUserResponseDto> Handle(CreateUserRequestDto request, CancellationToken cancellationToken)
@@ -26,6 +29,7 @@ namespace IOMate.Application.UseCases.CreateUser
                 throw new BadRequestException($"O e-mail '{request.Email}' já está em uso.");
 
             var user = _mapper.Map<User>(request);
+            user.Password = _passwordHasher.HashPassword(request.Password);
             _userRepository.Add(user);
             await _unitOfWork.Commit(cancellationToken);
             return _mapper.Map<CreateUserResponseDto>(user);
