@@ -2,11 +2,13 @@ using IOMate.Application.UseCases.CreateUser;
 using IOMate.Application.UseCases.GetAllUsers;
 using IOMate.Application.UseCases.UpdateUser;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IOMate.Api.Controllers;
 
-[Route("api/[controller]")]
+[Authorize]
+[Route("api/users")]
 [ApiController]
 public class UsersController : ControllerBase
 {
