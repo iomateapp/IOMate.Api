@@ -16,14 +16,8 @@ public class CreateUserHandlerTests
     [Fact]
     public async Task Handle_ShouldThrow_WhenEmailAlreadyExists()
     {
-        var request = new CreateUserRequestDto(
-            Email: "unique@email.com",
-            FirstName: "Unique",
-            LastName: "User",
-            Password: "123"
-        );
-            _userRepositoryMock.Setup(r => r.GetByEmail(request.Email, default))
-            .ReturnsAsync(new User());
+        var request = new CreateUserRequestDto("unique@email.com", "Unique", "User", "123");
+        _userRepositoryMock.Setup(r => r.GetByEmail(request.Email, default)).ReturnsAsync(new User());
 
         var handler = new CreateUserHandler(
             _unitOfWorkMock.Object,

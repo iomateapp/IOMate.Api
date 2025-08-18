@@ -13,19 +13,12 @@ public class UpdateUserHandlerTests
     private readonly Mock<IMapper> _mapperMock = new();
 
     [Fact]
-    public async Task Handle_ShouldReturnDefault_WhenUserNotFound()
+    public async Task Handle_ShouldReturnNull_WhenUserNotFound()
     {
-        var command = new UpdateUserCommand(
-            Id: Guid.NewGuid(), 
-            Request: new UpdateUserRequestDto(FirstName: "First Name", LastName: "Last", Email: "test@test.com")
-         );
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.Id, default))
-            .ReturnsAsync((User)null!);
+        var command = new UpdateUserCommand(Guid.NewGuid(), new UpdateUserRequestDto("First", "Last", "test@test.com"));
+        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.Id, default)).ReturnsAsync((User)null!);
 
-        var handler = new UpdateUserHandler(
-            _unitOfWorkMock.Object,
-            _userRepositoryMock.Object,
-            _mapperMock.Object);
+        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, _userRepositoryMock.Object, _mapperMock.Object);
 
         var result = await handler.Handle(command, default);
 
@@ -35,38 +28,22 @@ public class UpdateUserHandlerTests
     [Fact]
     public async Task Handle_ShouldThrow_WhenEmailAlreadyExistsForAnotherUser()
     {
-        var command = new UpdateUserCommand(
-            Id: Guid.NewGuid(),
-            Request: new UpdateUserRequestDto(FirstName: "First Name", LastName: "Last", Email: "test@test.com")
-        );
+        var command = new UpdateUserCommand(Guid.NewGuid(), new UpdateUserRequestDto("First", "Last", "test@test.com"));
         var user = new User { Id = command.Id };
         var existingUser = new User { Id = Guid.NewGuid() };
 
         _userRepositoryMock.Setup(r => r.GetByIdAsync(command.Id, default)).ReturnsAsync(user);
         _userRepositoryMock.Setup(r => r.GetByEmail(command.Request.Email, default)).ReturnsAsync(existingUser);
 
-        var handler = new UpdateUserHandler(
-            _unitOfWorkMock.Object,
-            _userRepositoryMock.Object,
-            _mapperMock.Object);
+        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, _userRepositoryMock.Object, _mapperMock.Object);
 
-        await Assert.ThrowsAsync<BadRequestException>(() =>
-            handler.Handle(command, default));
+        await Assert.ThrowsAsync<BadRequestException>(() => handler.Handle(command, default));
     }
 
     [Fact]
     public async Task Handle_ShouldUpdateUser_WhenValid()
     {
-        var command = new UpdateUserCommand
-        (
-            Id: Guid.NewGuid(),
-            Request: new UpdateUserRequestDto
-            (
-                Email: "unique@email.com",
-                FirstName: "First",
-                LastName: "Last"
-            )
-        );
+        var command = new UpdateUserCommand(Guid.NewGuid(), new UpdateUserRequestDto("First", "Last", "unique@email.com"));
         var user = new User { Id = command.Id };
         var response = new UpdateUserResponseDto();
 
@@ -74,10 +51,7 @@ public class UpdateUserHandlerTests
         _userRepositoryMock.Setup(r => r.GetByEmail(command.Request.Email, default)).ReturnsAsync((User)null!);
         _mapperMock.Setup(m => m.Map<UpdateUserResponseDto>(user)).Returns(response);
 
-        var handler = new UpdateUserHandler(
-            _unitOfWorkMock.Object,
-            _userRepositoryMock.Object,
-            _mapperMock.Object);
+        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, _userRepositoryMock.Object, _mapperMock.Object);
 
         var result = await handler.Handle(command, default);
 

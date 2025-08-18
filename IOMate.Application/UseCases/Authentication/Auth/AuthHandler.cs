@@ -6,7 +6,7 @@ using MediatR;
 
 namespace IOMate.Application.UseCases.Authentication.Auth
 {
-    internal class AuthHandler : IRequestHandler<AuthenticationRequestDto, AuthResponseDto>
+    public class AuthHandler : IRequestHandler<AuthenticationRequestDto, AuthResponseDto>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
