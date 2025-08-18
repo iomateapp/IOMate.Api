@@ -35,7 +35,7 @@ namespace IOMate.Infra.Repositories
         public async Task<List<T>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
         {
             return await Context.Set<T>()
-                .OrderBy(u => u.Id)
+                .OrderBy(u => u.DateCreated)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
