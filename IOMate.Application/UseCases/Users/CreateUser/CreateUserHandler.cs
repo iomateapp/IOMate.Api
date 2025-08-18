@@ -4,7 +4,7 @@ using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using MediatR;
 
-namespace IOMate.Application.UseCases.CreateUser
+namespace IOMate.Application.UseCases.Users.CreateUser
 {
     public class CreateUserHandler : IRequestHandler<CreateUserRequestDto, CreateUserResponseDto>
     {

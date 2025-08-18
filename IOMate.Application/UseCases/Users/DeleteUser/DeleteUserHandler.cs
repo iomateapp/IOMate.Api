@@ -3,7 +3,7 @@ using IOMate.Domain.Interfaces;
 using MediatR;
 
 
-namespace IOMate.Application.UseCases.DeleteUser
+namespace IOMate.Application.UseCases.Users.DeleteUser
 {
     public sealed class DeleteUserHandler :
                     IRequestHandler<DeleteUserRequestDto, DeleteUserResponseDto>

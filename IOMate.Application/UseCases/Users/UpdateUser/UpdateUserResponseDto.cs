@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IOMate.Application.UseCases.UpdateUser
+namespace IOMate.Application.UseCases.Users.UpdateUser
 {
     public sealed record UpdateUserResponseDto
     {

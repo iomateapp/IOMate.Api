@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace IOMate.Application.UseCases.CreateUser
+namespace IOMate.Application.UseCases.Users.CreateUser
 {
     public sealed class CreateUserValidator : AbstractValidator<CreateUserRequestDto>
     {

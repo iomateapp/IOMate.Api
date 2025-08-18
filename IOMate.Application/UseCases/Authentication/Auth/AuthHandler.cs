@@ -4,16 +4,16 @@ using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using MediatR;
 
-namespace IOMate.Application.UseCases.Authentication
+namespace IOMate.Application.UseCases.Authentication.Auth
 {
-    internal class AuthenticationHandler : IRequestHandler<AuthenticationRequestDto, AuthenticationResponseDto>
+    internal class AuthHandler : IRequestHandler<AuthenticationRequestDto, AuthResponseDto>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-        public AuthenticationHandler(
+        public AuthHandler(
             IUserRepository userRepository,
             IMapper mapper,
             IPasswordHasher passwordHasher,
@@ -25,7 +25,7 @@ namespace IOMate.Application.UseCases.Authentication
             _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        public async Task<AuthenticationResponseDto> Handle(AuthenticationRequestDto request, CancellationToken cancellationToken)
+        public async Task<AuthResponseDto> Handle(AuthenticationRequestDto request, CancellationToken cancellationToken)
         {
             var existingUser = await _userRepository.GetByEmail(request.Email, cancellationToken);
 
@@ -37,7 +37,7 @@ namespace IOMate.Application.UseCases.Authentication
 
             var token = _jwtTokenGenerator.GenerateToken(existingUser);
 
-            var response = new AuthenticationResponseDto 
+            var response = new AuthResponseDto 
             {
                 Token = token
             };

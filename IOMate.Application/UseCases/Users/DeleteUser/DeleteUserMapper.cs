@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using IOMate.Domain.Entities;
 
-namespace IOMate.Application.UseCases.DeleteUser
+namespace IOMate.Application.UseCases.Users.DeleteUser
 {
     public sealed class DeleteUserMapper : Profile
     {

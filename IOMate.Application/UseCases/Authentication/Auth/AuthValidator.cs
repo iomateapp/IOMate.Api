@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using IOMate.Application.UseCases.Authentication;
 
-namespace IOMate.Application.UseCases.CreateUser
+namespace IOMate.Application.UseCases.Authentication.Auth
 {
     public sealed class AuthenticationValidator : AbstractValidator<AuthenticationRequestDto>
     {

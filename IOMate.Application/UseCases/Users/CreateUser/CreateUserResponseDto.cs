@@ -1,4 +1,4 @@
-﻿namespace IOMate.Application.UseCases.CreateUser
+﻿namespace IOMate.Application.UseCases.Users.CreateUser
 {
     public sealed record CreateUserResponseDto
     {

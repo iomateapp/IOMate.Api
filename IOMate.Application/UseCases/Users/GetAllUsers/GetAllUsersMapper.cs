@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IOMate.Application.UseCases.GetAllUsers
+namespace IOMate.Application.UseCases.Users.GetAllUsers
 {
     public sealed class GetAllUsersMapper : Profile
     {

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using IOMate.Domain.Entities;
 
-namespace IOMate.Application.UseCases.UpdateUser
+namespace IOMate.Application.UseCases.Users.UpdateUser
 {
     public sealed class UpdateUserMapper : Profile
     {

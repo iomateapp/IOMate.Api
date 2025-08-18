@@ -1,10 +1,10 @@
-using IOMate.Application.UseCases.CreateUser;
-using IOMate.Application.UseCases.GetAllUsers;
-using IOMate.Application.UseCases.UpdateUser;
-using IOMate.Application.UseCases.DeleteUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using IOMate.Application.UseCases.Users.UpdateUser;
+using IOMate.Application.UseCases.Users.GetAllUsers;
+using IOMate.Application.UseCases.Users.CreateUser;
+using IOMate.Application.UseCases.Users.DeleteUser;
 
 namespace IOMate.Api.Controllers;
 

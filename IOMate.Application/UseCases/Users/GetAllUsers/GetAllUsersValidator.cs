@@ -3,7 +3,7 @@ using FluentValidation;
 using IOMate.Domain.Interfaces;
 using MediatR;
 
-namespace IOMate.Application.UseCases.GetAllUsers
+namespace IOMate.Application.UseCases.Users.GetAllUsers
 {
     public class GetAllUsersValidator : AbstractValidator<GetAllUsersRequestDto>
     {

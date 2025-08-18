@@ -1,4 +1,4 @@
-﻿using IOMate.Application.UseCases.Authentication;
+﻿using IOMate.Application.UseCases.Authentication.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

@@ -3,7 +3,7 @@ using IOMate.Application.Shared.Dtos;
 using IOMate.Domain.Interfaces;
 using MediatR;
 
-namespace IOMate.Application.UseCases.GetAllUsers
+namespace IOMate.Application.UseCases.Users.GetAllUsers
 {
     public sealed class GetAllUsersHandler : IRequestHandler<GetAllUsersRequestDto, PagedResponseDto<GetAllUsersResponseDto>>
     {

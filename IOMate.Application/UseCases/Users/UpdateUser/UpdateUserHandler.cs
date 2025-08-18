@@ -2,8 +2,8 @@
 using IOMate.Domain.Interfaces;
 using MediatR;
 using IOMate.Application.Shared.Exceptions;
-    
-namespace IOMate.Application.UseCases.UpdateUser
+
+namespace IOMate.Application.UseCases.Users.UpdateUser
 {
     public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UpdateUserResponseDto>
     {

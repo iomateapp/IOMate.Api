@@ -1,6 +1,6 @@
 using AutoMapper;
 using IOMate.Application.Shared.Exceptions;
-using IOMate.Application.UseCases.CreateUser;
+using IOMate.Application.UseCases.Users.CreateUser;
 using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using Moq;

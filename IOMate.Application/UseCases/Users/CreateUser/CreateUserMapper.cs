@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using IOMate.Domain.Entities;
 
-namespace IOMate.Application.UseCases.CreateUser
+namespace IOMate.Application.UseCases.Users.CreateUser
 {
     public sealed class CreateUserMapper : Profile
     {

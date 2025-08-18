@@ -1,6 +1,6 @@
-﻿namespace IOMate.Application.UseCases.DeleteUser
+﻿namespace IOMate.Application.UseCases.Users.GetAllUsers
 {
-    public sealed record DeleteUserResponseDto
+    public sealed record GetAllUsersResponseDto
     {
         public Guid Id { get; set; }
         public string? Email { get; set; }
