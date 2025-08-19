@@ -19,6 +19,7 @@ public class GetAllUsersMapperTests
     [Fact]
     public void Should_Map_User_To_GetAllUsersResponseDto()
     {
+        // Arrange
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -27,8 +28,10 @@ public class GetAllUsersMapperTests
             LastName = "Last"
         };
 
+        // Act
         var dto = _mapper.Map<GetAllUsersResponseDto>(user);
 
+        // Assert
         Assert.Equal(user.Id, dto.Id);
         Assert.Equal(user.Email, dto.Email);
         Assert.Equal(user.FirstName, dto.FirstName);

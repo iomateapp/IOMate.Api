@@ -17,14 +17,16 @@ public class AuthenticationControllerTests
     [Fact]
     public async Task Authenticate_ReturnsOk_WithToken()
     {
+        // Arrange
         var request = new AuthenticationRequestDto("user@email.com", "123456");
         var response = new AuthResponseDto { Token = "jwt-token" };
-
         _mediatorMock.Setup(m => m.Send(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
+        // Act
         var result = await _controller.Auth(request);
 
+        // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(response, okResult.Value);
     }

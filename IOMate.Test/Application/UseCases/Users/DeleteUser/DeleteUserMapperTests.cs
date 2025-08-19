@@ -19,9 +19,13 @@ public class DeleteUserMapperTests
     [Fact]
     public void Should_Map_User_To_DeleteUserResponseDto()
     {
+        // Arrange
         var user = new User { Id = Guid.NewGuid(), Email = "test@test.com" };
+
+        // Act
         var dto = _mapper.Map<DeleteUserResponseDto>(user);
 
+        // Assert
         Assert.Equal(user.Id, dto.Id);
         Assert.Equal(user.Email, dto.Email);
     }

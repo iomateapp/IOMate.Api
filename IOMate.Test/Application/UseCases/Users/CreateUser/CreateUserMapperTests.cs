@@ -19,9 +19,13 @@ public class CreateUserMapperTests
     [Fact]
     public void Should_Map_CreateUserRequestDto_To_User()
     {
+        // Arrange
         var dto = new CreateUserRequestDto("email@test.com", "First", "Last", "password");
+
+        // Act
         var user = _mapper.Map<User>(dto);
 
+        // Assert
         Assert.Equal(dto.Email, user.Email);
         Assert.Equal(dto.FirstName, user.FirstName);
         Assert.Equal(dto.LastName, user.LastName);
@@ -30,6 +34,7 @@ public class CreateUserMapperTests
     [Fact]
     public void Should_Map_User_To_CreateUserResponseDto()
     {
+        // Arrange
         var user = new User
         {
             Email = "email@test.com",
@@ -38,8 +43,10 @@ public class CreateUserMapperTests
             Password = "hashedPassword"
         };
 
+        // Act
         var dto = _mapper.Map<CreateUserResponseDto>(user);
 
+        // Assert
         Assert.Equal(dto.Email, user.Email);
         Assert.Equal(dto.FirstName, user.FirstName);
         Assert.Equal(dto.LastName, user.LastName);

@@ -16,6 +16,7 @@ public class CreateUserHandlerTests
     [Fact]
     public async Task Handle_ShouldThrow_WhenEmailAlreadyExists()
     {
+        // Arrange
         var request = new CreateUserRequestDto("unique@email.com", "Unique", "User", "123");
         _userRepositoryMock.Setup(r => r.GetByEmail(request.Email, default)).ReturnsAsync(new User());
 
@@ -25,6 +26,7 @@ public class CreateUserHandlerTests
             _mapperMock.Object,
             _passwordHasherMock.Object);
 
+        // Act & Assert
         await Assert.ThrowsAsync<BadRequestException>(() =>
             handler.Handle(request, default));
     }
@@ -32,6 +34,7 @@ public class CreateUserHandlerTests
     [Fact]
     public async Task Handle_ShouldCreateUser_WhenEmailIsUnique()
     {
+        // Arrange
         var request = new CreateUserRequestDto(
             Email: "unique@email.com",
             Password: "123",
@@ -53,8 +56,10 @@ public class CreateUserHandlerTests
             _mapperMock.Object,
             _passwordHasherMock.Object);
 
+        // Act
         var result = await handler.Handle(request, default);
 
+        // Assert
         _userRepositoryMock.Verify(r => r.Add(user), Times.Once);
         _unitOfWorkMock.Verify(u => u.Commit(default), Times.Once);
         Assert.Equal(response, result);

@@ -14,6 +14,7 @@ public class DeleteUserHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnDefault_WhenUserNotFound()
     {
+        // Arrange
         var request = new DeleteUserRequestDto(Id: Guid.NewGuid());
         _userRepositoryMock.Setup(r => r.GetByIdAsync(request.Id, default))
             .ReturnsAsync((User)null!);
@@ -23,14 +24,17 @@ public class DeleteUserHandlerTests
             _userRepositoryMock.Object,
             _mapperMock.Object);
 
+        // Act
         var result = await handler.Handle(request, default);
 
+        // Assert
         Assert.Null(result);
     }
 
     [Fact]
     public async Task Handle_ShouldDeleteUser_WhenUserExists()
     {
+        // Arrange
         var request = new DeleteUserRequestDto(Id: Guid.NewGuid());
         var user = new User { Id = request.Id };
         var response = new DeleteUserResponseDto();
@@ -43,8 +47,10 @@ public class DeleteUserHandlerTests
             _userRepositoryMock.Object,
             _mapperMock.Object);
 
+        // Act
         var result = await handler.Handle(request, default);
 
+        // Assert
         _userRepositoryMock.Verify(r => r.Delete(user), Times.Once);
         _unitOfWorkMock.Verify(u => u.Commit(default), Times.Once);
         Assert.Equal(response, result);

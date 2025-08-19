@@ -2,9 +2,6 @@ using IOMate.Infra.Context;
 using IOMate.Infra.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 public class UnitOfWorkTests
 {

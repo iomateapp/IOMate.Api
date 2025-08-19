@@ -22,6 +22,7 @@ public class UsersControllerTests
     [Fact]
     public async Task GetAll_ReturnsOk_WithUsers()
     {
+        // Arrange
         var users = new PagedResponseDto<GetAllUsersResponseDto>
         {
             Results = new List<GetAllUsersResponseDto> { new(), new() },
@@ -33,8 +34,10 @@ public class UsersControllerTests
         _mediatorMock.Setup(static m => m.Send(It.IsAny<GetAllUsersRequestDto>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(users);
 
+        // Act
         var result = await _controller.GetAll();
 
+        // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         Assert.Equal(users, okResult.Value);
     }
@@ -42,7 +45,8 @@ public class UsersControllerTests
     [Fact]
     public async Task GetAll_UsesDefaultPaging()
     {
-        var pagedResponse = new PagedResponseDto<GetAllUsersResponseDto>
+        // Arrange
+            var pagedResponse = new PagedResponseDto<GetAllUsersResponseDto>
         {
             Results = new List<GetAllUsersResponseDto>(),
             TotalCount = 0,
@@ -53,20 +57,26 @@ public class UsersControllerTests
         _mediatorMock.Setup(m => m.Send(It.Is<GetAllUsersRequestDto>(r => r.PageNumber == 1 && r.PageSize == 10), It.IsAny<CancellationToken>()))
             .ReturnsAsync(pagedResponse);
 
+        // Act
         await _controller.GetAll();
+
+        // Assert
         _mediatorMock.Verify(m => m.Send(It.IsAny<GetAllUsersRequestDto>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task Create_ReturnsOk_WithUserId()
     {
+        // Arrange
         var request = new CreateUserRequestDto("email@test.com", "First", "Last", "pass");
         var userId = Guid.NewGuid();
         _mediatorMock.Setup(m => m.Send(It.IsAny<CreateUserRequestDto>(), default))
                      .ReturnsAsync(new CreateUserResponseDto { Id = userId });
 
+        // Act
         var result = await _controller.Create(request);
 
+        // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(userId, ((CreateUserResponseDto)okResult.Value).Id);
     }
@@ -74,14 +84,17 @@ public class UsersControllerTests
     [Fact]
     public async Task Update_ReturnsOk_WithResponse()
     {
+        // Arrange
         var id = Guid.NewGuid();
         var request = new UpdateUserRequestDto("email@test.com", "First", "Last");
         var response = new UpdateUserResponseDto();
         _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
+        // Act
         var result = await _controller.Update(id, request, default);
 
+        // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         Assert.Equal(response, okResult.Value);
     }
@@ -89,21 +102,28 @@ public class UsersControllerTests
     [Fact]
     public async Task Delete_ReturnsBadRequest_WhenIdIsNull()
     {
+        // Arrange
+
+        // Act
         var result = await _controller.Delete(null, default);
 
+        // Assert
         Assert.IsType<BadRequestResult>(result);
     }
 
     [Fact]
     public async Task Delete_ReturnsOk_WhenUserDeleted()
     {
+        // Arrange
         var id = Guid.NewGuid();
         var response = new DeleteUserResponseDto();
         _mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserRequestDto>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
+        // Act
         var result = await _controller.Delete(id, default);
 
+        // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(response, okResult.Value);
     }
