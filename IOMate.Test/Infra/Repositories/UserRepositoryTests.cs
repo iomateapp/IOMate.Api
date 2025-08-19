@@ -1,18 +1,11 @@
 using IOMate.Domain.Entities;
 using IOMate.Infra.Context;
 using IOMate.Infra.Repositories;
-using Microsoft.EntityFrameworkCore;        
+using Microsoft.EntityFrameworkCore;
+using Xunit;
 
-public class UserRepositoryTests
+public class UserRepositoryTests : RepositoryTestBase
 {
-    private AppDbContext CreateContext()
-    {
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        return new AppDbContext(options);
-    }
-
     [Fact]
     public async Task GetByEmail_ShouldReturnUser_WhenEmailExists()
     {
