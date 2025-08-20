@@ -1,13 +1,22 @@
 ﻿using FluentValidation;
+using IOMate.Application.Resources;
+using IOMate.Application.UseCases.Authentication.Auth;
+using Microsoft.Extensions.Localization;
 
-namespace IOMate.Application.UseCases.Authentication.Auth
+public class AuthenticationValidator : AbstractValidator<AuthRequestDto>
 {
-    public sealed class AuthenticationValidator : AbstractValidator<AuthenticationRequestDto>
+    public AuthenticationValidator(IStringLocalizer<Messages> localizer)
     {
-        public AuthenticationValidator()
-        {
-            RuleFor(u => u.Email).NotEmpty().EmailAddress();
-            RuleFor(u => u.Password).NotEmpty().MinimumLength(6);
-        }
+        RuleFor(u => u.Email)
+            .NotEmpty()
+            .WithMessage(localizer["RequiredField", "Email"])
+            .EmailAddress()
+            .WithMessage(localizer["InvalidEmail"]);
+
+        RuleFor(u => u.Password)
+            .NotEmpty()
+            .WithMessage(localizer["RequiredField", "Password"])
+            .MinimumLength(6)
+            .WithMessage(localizer["PasswordMinLength", 6]);
     }
 }

@@ -18,7 +18,7 @@ public class AuthenticationControllerTests
     public async Task Authenticate_ReturnsOk_WithToken()
     {
         // Arrange
-        var request = new AuthenticationRequestDto("user@email.com", "123456");
+        var request = new AuthRequestDto("user@email.com", "123456");
         var response = new AuthResponseDto { Token = "jwt-token" };
         _mediatorMock.Setup(m => m.Send(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);

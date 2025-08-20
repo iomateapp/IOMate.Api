@@ -2,5 +2,5 @@
 
 namespace IOMate.Application.UseCases.Authentication.Auth
 {
-    public sealed record AuthenticationRequestDto(string Email, string Password) : IRequest<AuthResponseDto>;
+    public sealed record AuthRequestDto(string Email, string Password) : IRequest<AuthResponseDto>;
 }

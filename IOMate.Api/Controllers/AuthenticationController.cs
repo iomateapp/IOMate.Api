@@ -15,7 +15,7 @@ namespace IOMate.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Auth(AuthenticationRequestDto request)
+        public async Task<IActionResult> Auth(AuthRequestDto request)
         {
             var userId = await _mediator.Send(request);
             return Ok(userId);

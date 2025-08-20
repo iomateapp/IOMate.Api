@@ -10,7 +10,7 @@ public class AuthenticationValidatorTests
     public void Should_Have_Error_When_Email_Is_Empty()
     {
         // Arrange
-        var model = new AuthenticationRequestDto("", "123456");
+        var model = new AuthRequestDto("", "123456");
 
         // Act
         var result = _validator.TestValidate(model);
@@ -23,7 +23,7 @@ public class AuthenticationValidatorTests
     public void Should_Have_Error_When_Email_Is_Invalid()
     {
         // Arrange
-        var model = new AuthenticationRequestDto("invalid-email", "123456");
+        var model = new AuthRequestDto("invalid-email", "123456");
 
         // Act
         var result = _validator.TestValidate(model);
@@ -36,7 +36,7 @@ public class AuthenticationValidatorTests
     public void Should_Have_Error_When_Password_Is_Empty()
     {
         // Arrange
-        var model = new AuthenticationRequestDto("user@email.com", "");
+        var model = new AuthRequestDto("user@email.com", "");
 
         // Act
         var result = _validator.TestValidate(model);
@@ -49,7 +49,7 @@ public class AuthenticationValidatorTests
     public void Should_Have_Error_When_Password_Is_Short()
     {
         // Arrange
-        var model = new AuthenticationRequestDto("user@email.com", "123");
+        var model = new AuthRequestDto("user@email.com", "123");
 
         // Act
         var result = _validator.TestValidate(model);
@@ -62,7 +62,7 @@ public class AuthenticationValidatorTests
     public void Should_Not_Have_Error_When_Valid()
     {
         // Arrange
-        var model = new AuthenticationRequestDto("user@email.com", "123456");
+        var model = new AuthRequestDto("user@email.com", "123456");
 
         // Act
         var result = _validator.TestValidate(model);

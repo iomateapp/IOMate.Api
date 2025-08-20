@@ -6,7 +6,7 @@ using MediatR;
 
 namespace IOMate.Application.UseCases.Authentication.Auth
 {
-    public class AuthHandler : IRequestHandler<AuthenticationRequestDto, AuthResponseDto>
+    public class AuthHandler : IRequestHandler<AuthRequestDto, AuthResponseDto>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace IOMate.Application.UseCases.Authentication.Auth
             _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        public async Task<AuthResponseDto> Handle(AuthenticationRequestDto request, CancellationToken cancellationToken)
+        public async Task<AuthResponseDto> Handle(AuthRequestDto request, CancellationToken cancellationToken)
         {
             var existingUser = await _userRepository.GetByEmail(request.Email, cancellationToken);
 

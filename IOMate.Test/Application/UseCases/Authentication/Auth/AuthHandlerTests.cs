@@ -18,7 +18,7 @@ public class AuthHandlerTests
     public async Task Handle_ShouldThrow_WhenUserNotFound()
     {
         // Arrange
-        var request = new AuthenticationRequestDto("notfound@email.com", "123456");
+        var request = new AuthRequestDto("notfound@email.com", "123456");
         _userRepositoryMock.Setup(r => r.GetByEmail(request.Email, default)).ReturnsAsync((User)null!);
         var handler = new AuthHandler(
             _userRepositoryMock.Object,
@@ -35,7 +35,7 @@ public class AuthHandlerTests
     {
         // Arrange
         var user = new User { Email = "user@email.com", Password = "hashed" };
-        var request = new AuthenticationRequestDto(user.Email, "wrongpass");
+        var request = new AuthRequestDto(user.Email, "wrongpass");
         _userRepositoryMock.Setup(r => r.GetByEmail(request.Email, default)).ReturnsAsync(user);
         _passwordHasherMock.Setup(h => h.VerifyPassword(request.Password, user.Password)).Returns(false);
         var handler = new AuthHandler(
@@ -53,7 +53,7 @@ public class AuthHandlerTests
     {
         // Arrange
         var user = new User { Email = "user@email.com", Password = "hashed" };
-        var request = new AuthenticationRequestDto(user.Email, "123456");
+        var request = new AuthRequestDto(user.Email, "123456");
         _userRepositoryMock.Setup(r => r.GetByEmail(request.Email, default)).ReturnsAsync(user);
         _passwordHasherMock.Setup(h => h.VerifyPassword(request.Password, user.Password)).Returns(true);
         _jwtTokenGeneratorMock.Setup(j => j.GenerateToken(user)).Returns("token");

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace IOMate.Api.Extensions
@@ -23,6 +26,9 @@ namespace IOMate.Api.Extensions
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "IOMate API", Version = "v1" });
+
+                options.OperationFilter<AcceptLanguageHeaderOperationFilter>();
+
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -69,6 +75,26 @@ namespace IOMate.Api.Extensions
                     ValidAudience = jwtSettings["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]))
                 };
+            });
+        }
+    }
+
+    public class AcceptLanguageHeaderOperationFilter : Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter
+    {
+        public void Apply(OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context)
+        {
+            operation.Parameters ??= new List<OpenApiParameter>();
+            operation.Parameters.Add(new OpenApiParameter
+            {
+                Name = "Accept-Language",
+                In = ParameterLocation.Header,
+                Required = false,
+                Schema = new OpenApiSchema
+                {
+                    Type = "string",
+                    Default = new Microsoft.OpenApi.Any.OpenApiString("en-US")
+                },
+                Description = "Request culture (eg: pt-BR, en-US)"
             });
         }
     }
