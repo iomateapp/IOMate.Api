@@ -1,7 +1,7 @@
 using FluentValidation.TestHelper;
 using IOMate.Application.UseCases.Users.CreateUser;
 
-public class CreateUserValidatorTests : ValidationTestBase
+public class CreateUserValidatorTests : BaseTest
 {
     private readonly CreateUserValidator _validator;
 

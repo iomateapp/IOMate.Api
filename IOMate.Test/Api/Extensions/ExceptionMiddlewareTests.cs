@@ -1,9 +1,9 @@
-using System.Net;
-using System.Text.Json;
 using FluentValidation;
 using FluentValidation.Results;
 using IOMate.Application.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
+using System.Net;
+using System.Text.Json;
 
 public class ExceptionMiddlewareTests
 {
@@ -41,9 +41,10 @@ public class ExceptionMiddlewareTests
         // Assert
         Assert.Equal((int)HttpStatusCode.BadRequest, context.Response.StatusCode);
         var json = await GetResponseJson(context.Response);
-        var errors = json.GetProperty("errors").EnumerateArray().ToList();
-        Assert.Contains(errors, e => e.GetProperty("PropertyName").GetString() == "Email" && e.GetProperty("ErrorMessage").GetString() == "Email inválido");
-        Assert.Contains(errors, e => e.GetProperty("PropertyName").GetString() == "Password" && e.GetProperty("ErrorMessage").GetString() == "Senha obrigatória");
+        var errors = json.GetProperty("ValidationErrors").EnumerateArray().ToList();
+        Assert.Contains(errors, e => e.GetProperty("Field").GetString() == "Email" && e.GetProperty("Message").GetString() == "Email inválido");
+        Assert.Contains(errors, e => e.GetProperty("Field").GetString() == "Password" && e.GetProperty("Message").GetString() == "Senha obrigatória");
+        Assert.Equal("Validation failed.", json.GetProperty("Message").GetString());
         Assert.Equal("application/json", context.Response.ContentType);
     }
 
@@ -51,8 +52,8 @@ public class ExceptionMiddlewareTests
     public async Task InvokeAsync_Should_Handle_BadRequestException()
     {
         // Arrange
-        var errors = new[] { "Campo obrigatório", "Formato inválido" };
-        var exception = new BadRequestException(errors);
+        var error = "Error message";
+        var exception = new BadRequestException(error);
 
         var context = CreateContextWithBody();
         var middleware = new ExceptionMiddleware(_ => throw exception);
@@ -63,9 +64,9 @@ public class ExceptionMiddlewareTests
         // Assert
         Assert.Equal((int)HttpStatusCode.BadRequest, context.Response.StatusCode);
         var json = await GetResponseJson(context.Response);
-        var errorList = json.GetProperty("errors").EnumerateArray().ToList();
-        Assert.Contains(errorList, e => e.GetProperty("ErrorMessage").GetString() == "Campo obrigatório");
-        Assert.Contains(errorList, e => e.GetProperty("ErrorMessage").GetString() == "Formato inválido");
+        var errorList = json.GetProperty("ValidationErrors").EnumerateArray().ToList();
+        Assert.Empty(errorList);
+        Assert.Equal(error, json.GetProperty("Message").GetString());
         Assert.Equal("application/json", context.Response.ContentType);
     }
 
@@ -84,9 +85,9 @@ public class ExceptionMiddlewareTests
         // Assert
         Assert.Equal((int)HttpStatusCode.NotFound, context.Response.StatusCode);
         var json = await GetResponseJson(context.Response);
-        var errors = json.GetProperty("errors").EnumerateArray().ToList();
-        Assert.Single(errors);
-        Assert.Equal("Usuário não encontrado", errors[0].GetProperty("ErrorMessage").GetString());
+        var errors = json.GetProperty("ValidationErrors").EnumerateArray().ToList();
+        Assert.Empty(errors);
+        Assert.Equal("Usuário não encontrado", json.GetProperty("Message").GetString());
         Assert.Equal("application/json", context.Response.ContentType);
     }
 

@@ -1,7 +1,7 @@
 using FluentValidation.TestHelper;
 using IOMate.Application.UseCases.Users.UpdateUser;
 
-public class UpdateUserValidatorTests : ValidationTestBase
+public class UpdateUserValidatorTests : BaseTest
 {
     private readonly UpdateUserValidator _validator;
 

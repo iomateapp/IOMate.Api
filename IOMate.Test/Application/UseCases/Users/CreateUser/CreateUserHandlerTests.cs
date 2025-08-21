@@ -5,7 +5,7 @@ using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using Moq;
 
-public class CreateUserHandlerTests
+public class CreateUserHandlerTests : BaseTest
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IUserRepository> _userRepositoryMock = new();
@@ -23,7 +23,8 @@ public class CreateUserHandlerTests
             _unitOfWorkMock.Object,
             _userRepositoryMock.Object,
             _mapperMock.Object,
-            _passwordHasherMock.Object);
+            _passwordHasherMock.Object,
+            Localizer);
 
         // Act & Assert
         await Assert.ThrowsAsync<BadRequestException>(() =>
@@ -53,7 +54,8 @@ public class CreateUserHandlerTests
             _unitOfWorkMock.Object,
             _userRepositoryMock.Object,
             _mapperMock.Object,
-            _passwordHasherMock.Object);
+            _passwordHasherMock.Object,
+            Localizer);
 
         // Act
         var result = await handler.Handle(request, default);

@@ -5,7 +5,7 @@ using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using Moq;
 
-public class AuthHandlerTests
+public class AuthHandlerTests : BaseTest
 {
     private readonly Mock<IUserRepository> _userRepositoryMock = new();
     private readonly Mock<IMapper> _mapperMock = new();
@@ -22,7 +22,8 @@ public class AuthHandlerTests
             _userRepositoryMock.Object,
             _mapperMock.Object,
             _passwordHasherMock.Object,
-            _jwtTokenGeneratorMock.Object);
+            _jwtTokenGeneratorMock.Object,
+            Localizer);
 
         // Act & Assert
         await Assert.ThrowsAsync<BadRequestException>(() => handler.Handle(request, default));
@@ -40,7 +41,8 @@ public class AuthHandlerTests
             _userRepositoryMock.Object,
             _mapperMock.Object,
             _passwordHasherMock.Object,
-            _jwtTokenGeneratorMock.Object);
+            _jwtTokenGeneratorMock.Object,
+            Localizer);
 
         // Act & Assert
         await Assert.ThrowsAsync<BadRequestException>(() => handler.Handle(request, default));
@@ -59,7 +61,8 @@ public class AuthHandlerTests
             _userRepositoryMock.Object,
             _mapperMock.Object,
             _passwordHasherMock.Object,
-            _jwtTokenGeneratorMock.Object);
+            _jwtTokenGeneratorMock.Object,
+            Localizer);
 
         // Act
         var result = await handler.Handle(request, default);

@@ -2,11 +2,11 @@ using IOMate.Application.Resources;
 using Microsoft.Extensions.Localization;
 using Moq;
 
-public abstract class ValidationTestBase
+public abstract class BaseTest
 {
     protected IStringLocalizer<Messages> Localizer { get; }
 
-    protected ValidationTestBase()
+    protected BaseTest()
     {
         var localizerMock = new Mock<IStringLocalizer<Messages>>();
         localizerMock.Setup(l => l[It.IsAny<string>()])

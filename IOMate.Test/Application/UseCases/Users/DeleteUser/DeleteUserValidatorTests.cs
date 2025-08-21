@@ -1,7 +1,7 @@
 using FluentValidation.TestHelper;
 using IOMate.Application.UseCases.Users.DeleteUser;
 
-public class DeleteUserValidatorTests : ValidationTestBase
+public class DeleteUserValidatorTests : BaseTest
 {
     private readonly DeleteUserValidator _validator;
 

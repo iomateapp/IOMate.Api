@@ -5,7 +5,7 @@ using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using Moq;
 
-public class UpdateUserHandlerTests
+public class UpdateUserHandlerTests : BaseTest
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IUserRepository> _userRepositoryMock = new();
@@ -17,7 +17,7 @@ public class UpdateUserHandlerTests
         // Arrange
         var command = new UpdateUserCommand(Guid.NewGuid(), new UpdateUserRequestDto("First", "Last", "test@test.com"));
         _userRepositoryMock.Setup(r => r.GetByIdAsync(command.Id, default)).ReturnsAsync((User)null!);
-        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, _userRepositoryMock.Object, _mapperMock.Object);
+        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, Localizer, _userRepositoryMock.Object, _mapperMock.Object);
 
         // Act
         var result = await handler.Handle(command, default);
@@ -36,7 +36,7 @@ public class UpdateUserHandlerTests
 
         _userRepositoryMock.Setup(r => r.GetByIdAsync(command.Id, default)).ReturnsAsync(user);
         _userRepositoryMock.Setup(r => r.GetByEmail(command.Request.Email, default)).ReturnsAsync(existingUser);
-        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, _userRepositoryMock.Object, _mapperMock.Object);
+        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, Localizer, _userRepositoryMock.Object, _mapperMock.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<BadRequestException>(() => handler.Handle(command, default));
@@ -53,7 +53,7 @@ public class UpdateUserHandlerTests
         _userRepositoryMock.Setup(r => r.GetByIdAsync(command.Id, default)).ReturnsAsync(user);
         _userRepositoryMock.Setup(r => r.GetByEmail(command.Request.Email, default)).ReturnsAsync((User)null!);
         _mapperMock.Setup(m => m.Map<UpdateUserResponseDto>(user)).Returns(response);
-        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, _userRepositoryMock.Object, _mapperMock.Object);
+        var handler = new UpdateUserHandler(_unitOfWorkMock.Object, Localizer, _userRepositoryMock.Object, _mapperMock.Object);
 
         // Act
         var result = await handler.Handle(command, default);
