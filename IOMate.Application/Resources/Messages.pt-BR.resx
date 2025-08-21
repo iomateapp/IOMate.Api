@@ -138,4 +138,16 @@
   <data name="EmailAlreadyInUse" xml:space="preserve">
     <value>O e-mail '{0}' já está em uso.</value>
   </data>
+  <data name="ValidationFailed" xml:space="preserve">
+    <value>Falha de validação.</value>
+  </data>
+  <data name="BadRequest" xml:space="preserve">
+    <value>Bad request.</value>
+  </data>
+  <data name="ResourceNotFound" xml:space="preserve">
+    <value>Recurso não encontrado.</value>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>Ocorreu um erro inesperado.</value>
+  </data>
 </root>

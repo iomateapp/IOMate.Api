@@ -1,6 +1,7 @@
 using IOMate.Api.Extensions;
 using IOMate.Application.Extensions;
-using IOMate.Application.Resources;
+using IOMate.Domain.Entities;
+using IOMate.Domain.Interfaces;
 using IOMate.Infra.Context;
 using IOMate.Infra.Extensions;
 using Microsoft.AspNetCore.Localization;
@@ -33,7 +34,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseMiddleware<ExceptionMiddleware>();
 
 var supportedCultures = new[] { "pt-BR", "en-US" };
 app.UseRequestLocalization(new RequestLocalizationOptions
@@ -42,6 +42,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedCultures = supportedCultures.Select(c => new CultureInfo(c)).ToList(),
     SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList()
 });
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.Run();
 
@@ -50,4 +51,19 @@ static void CreateDatabase(WebApplication app)
     using var scope = app.Services.CreateScope();
     var dataContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dataContext.Database.EnsureCreated();
+
+    // Seed admin user
+    if (!dataContext.Users.Any(u => u.Email == "admin@iomate.com"))
+    {
+        var passwordHasher = scope.ServiceProvider.GetService<IPasswordHasher>();
+        var admin = new User
+        {
+            FirstName = "Admin",
+            LastName = "IOMate",
+            Email = "admin@iomate.com",
+            Password = passwordHasher?.HashPassword("Admin@123")
+        };
+        dataContext.Users.Add(admin);
+        dataContext.SaveChanges();
+    }
 }

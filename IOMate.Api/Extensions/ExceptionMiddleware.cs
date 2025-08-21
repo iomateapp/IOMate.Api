@@ -1,16 +1,19 @@
 using FluentValidation;
+using IOMate.Application.Resources;
 using IOMate.Application.Shared.Exceptions;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using System.Net;
 using System.Text.Json;
 
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly IStringLocalizer<Messages> _localizer;
 
-    public ExceptionMiddleware(RequestDelegate next)
+    public ExceptionMiddleware(RequestDelegate next, IStringLocalizer<Messages> localizer)
     {
         _next = next;
+        _localizer = localizer;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -23,29 +26,29 @@ public class ExceptionMiddleware
         {
             await WriteErrorResponseAsync(httpContext, HttpStatusCode.BadRequest,
                 ex.Errors.Select(e => new { Field = e.PropertyName, Message = e.ErrorMessage }),
-                "Validation failed.");
+                _localizer["ValidationFailed"]);
         }
         catch (BadRequestException ex)
         {
             await WriteErrorResponseAsync(httpContext, HttpStatusCode.BadRequest,
                 Enumerable.Empty<object>(),
-                ex.Message ?? "Bad request.");
+                ex.Message ?? _localizer["BadRequest"]);
         }
         catch (NotFoundException ex)
         {
             await WriteErrorResponseAsync(httpContext, HttpStatusCode.NotFound,
                 Enumerable.Empty<object>(),
-                ex.Message ?? "Resource not found.");
+                ex.Message ?? _localizer["ResourceNotFound"]);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await WriteErrorResponseAsync(httpContext, HttpStatusCode.InternalServerError,
                 Enumerable.Empty<object>(),
-                "An unexpected error occurred.");
+                _localizer["UnexpectedError"]);
         }
     }
 
-    private static Task WriteErrorResponseAsync(HttpContext context, HttpStatusCode statusCode, IEnumerable<object> validationErrors, string message)
+    private Task WriteErrorResponseAsync(HttpContext context, HttpStatusCode statusCode, IEnumerable<object> validationErrors, string message)
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
