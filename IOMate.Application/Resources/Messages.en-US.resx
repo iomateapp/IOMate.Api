@@ -132,4 +132,10 @@
   <data name="MinLength" xml:space="preserve">
     <value>The field {0} must have a minimum of {1} characters.</value>
   </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Invalid username and/or password.</value>
+  </data>
+  <data name="EmailAlreadyInUse" xml:space="preserve">
+    <value>The email '{0}' is already in use.</value>
+  </data>
 </root>

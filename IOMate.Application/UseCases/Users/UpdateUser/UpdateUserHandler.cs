@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using IOMate.Application.Resources;
+using IOMate.Application.Shared.Exceptions;
 using IOMate.Domain.Interfaces;
 using MediatR;
-using IOMate.Application.Shared.Exceptions;
+using Microsoft.Extensions.Localization;
 
 namespace IOMate.Application.UseCases.Users.UpdateUser
 {
@@ -10,13 +12,15 @@ namespace IOMate.Application.UseCases.Users.UpdateUser
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<Messages> _stringLocalizer;
 
-        public UpdateUserHandler(IUnitOfWork unitOfWork,
+        public UpdateUserHandler(IUnitOfWork unitOfWork, IStringLocalizer<Messages> stringLocalizer,
                                  IUserRepository userRepository, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _mapper = mapper;
+            _stringLocalizer = stringLocalizer;
         }
         public async Task<UpdateUserResponseDto> Handle(UpdateUserCommand command,
                                                      CancellationToken cancellationToken)
@@ -27,7 +31,7 @@ namespace IOMate.Application.UseCases.Users.UpdateUser
 
             var existingUser = await _userRepository.GetByEmail(command.Request.Email, cancellationToken);
             if (existingUser != null && existingUser.Id != user.Id)
-                throw new BadRequestException($"O e-mail '{command.Request.Email}' já está em uso.");
+                throw new BadRequestException(_stringLocalizer["EmailAlreadyInUse", command.Request.Email]);
 
             user.FirstName = command.Request.FirstName;
             user.LastName = command.Request.LastName;
