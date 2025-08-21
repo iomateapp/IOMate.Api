@@ -21,47 +21,40 @@ public class ExceptionMiddleware
         }
         catch (ValidationException ex)
         {
-            await HandleValidationExceptionAsync(httpContext, ex);
+            await WriteErrorResponseAsync(httpContext, HttpStatusCode.BadRequest,
+                ex.Errors.Select(e => new { Field = e.PropertyName, Message = e.ErrorMessage }),
+                "Validation failed.");
         }
         catch (BadRequestException ex)
         {
-            await HandleBadRequestExceptionAsync(httpContext, ex);
+            await WriteErrorResponseAsync(httpContext, HttpStatusCode.BadRequest,
+                Enumerable.Empty<object>(),
+                ex.Message ?? "Bad request.");
         }
         catch (NotFoundException ex)
         {
-            await HandleNotFoundExceptionAsync(httpContext, ex);
+            await WriteErrorResponseAsync(httpContext, HttpStatusCode.NotFound,
+                Enumerable.Empty<object>(),
+                ex.Message ?? "Resource not found.");
+        }
+        catch (Exception ex)
+        {
+            await WriteErrorResponseAsync(httpContext, HttpStatusCode.InternalServerError,
+                Enumerable.Empty<object>(),
+                "An unexpected error occurred.");
         }
     }
 
-    private static Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception)
+    private static Task WriteErrorResponseAsync(HttpContext context, HttpStatusCode statusCode, IEnumerable<object> validationErrors, string message)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        context.Response.StatusCode = (int)statusCode;
 
-        var errors = exception.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
-        var result = JsonSerializer.Serialize(new { errors });
-
-        return context.Response.WriteAsync(result);
-    }
-
-    private static Task HandleBadRequestExceptionAsync(HttpContext context, BadRequestException exception)
-    {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-        var errors = exception.Errors.Select(e => new { PropertyName = string.Empty, ErrorMessage = e });
-        var result = JsonSerializer.Serialize(new { errors });
-
-        return context.Response.WriteAsync(result);
-    }
-
-    private static Task HandleNotFoundExceptionAsync(HttpContext context, NotFoundException exception)
-    {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-
-        var errors = new[] { new { PropertyName = string.Empty, ErrorMessage = exception.Message } };
-        var result = JsonSerializer.Serialize(new { errors });
+        var result = JsonSerializer.Serialize(new
+        {
+            ValidationErrors = validationErrors.ToList(),
+            Message = message
+        });
 
         return context.Response.WriteAsync(result);
     }
