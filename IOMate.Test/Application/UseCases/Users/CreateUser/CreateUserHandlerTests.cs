@@ -4,7 +4,6 @@ using IOMate.Application.UseCases.Users.CreateUser;
 using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using Moq;
-using Xunit;
 
 public class CreateUserHandlerTests
 {

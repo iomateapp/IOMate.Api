@@ -1,8 +1,6 @@
 using AutoMapper;
 using IOMate.Application.UseCases.Users.CreateUser;
 using IOMate.Domain.Entities;
-using Xunit;
-
 public class CreateUserMapperTests
 {
     private readonly IMapper _mapper;

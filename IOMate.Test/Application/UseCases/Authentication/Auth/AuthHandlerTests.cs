@@ -4,8 +4,6 @@ using IOMate.Application.UseCases.Authentication.Auth;
 using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using Moq;
-using System.Threading.Tasks;
-using Xunit;
 
 public class AuthHandlerTests
 {

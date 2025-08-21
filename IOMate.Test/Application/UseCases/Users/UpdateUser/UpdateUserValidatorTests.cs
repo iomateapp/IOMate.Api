@@ -1,10 +1,14 @@
 using FluentValidation.TestHelper;
 using IOMate.Application.UseCases.Users.UpdateUser;
-using Xunit;
 
-public class UpdateUserValidatorTests
+public class UpdateUserValidatorTests : ValidationTestBase
 {
-    private readonly UpdateUserValidator _validator = new();
+    private readonly UpdateUserValidator _validator;
+
+    public UpdateUserValidatorTests()
+    {
+        _validator = new UpdateUserValidator(Localizer);
+    }
 
     [Fact]
     public void Should_Have_Error_When_Email_Is_Empty()

@@ -1,7 +1,6 @@
 using AutoMapper;
 using IOMate.Application.UseCases.Users.DeleteUser;
 using IOMate.Domain.Entities;
-using Xunit;
 
 public class DeleteUserMapperTests
 {

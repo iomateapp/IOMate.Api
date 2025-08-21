@@ -1,5 +1,4 @@
 using IOMate.Application.Services;
-using Xunit;
 
 public class PasswordHasherTests
 {

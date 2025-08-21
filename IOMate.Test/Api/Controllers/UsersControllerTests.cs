@@ -7,7 +7,6 @@ using IOMate.Application.UseCases.Users.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xunit;
 
 public class UsersControllerTests
 {

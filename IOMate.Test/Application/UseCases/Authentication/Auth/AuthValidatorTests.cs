@@ -1,10 +1,14 @@
 using FluentValidation.TestHelper;
 using IOMate.Application.UseCases.Authentication.Auth;
-using Xunit;
 
-public class AuthenticationValidatorTests
+public class AuthenticationValidatorTests : ValidationTestBase
 {
-    private readonly AuthenticationValidator _validator = new();
+    private readonly AuthValidator _validator;
+
+    public AuthenticationValidatorTests()
+    {
+        _validator = new AuthValidator(Localizer);
+    }
 
     [Fact]
     public void Should_Have_Error_When_Email_Is_Empty()

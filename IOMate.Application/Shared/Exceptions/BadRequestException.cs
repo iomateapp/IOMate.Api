@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace IOMate.Application.Shared.Exceptions
+﻿namespace IOMate.Application.Shared.Exceptions
 {
     public class BadRequestException : Exception
     {

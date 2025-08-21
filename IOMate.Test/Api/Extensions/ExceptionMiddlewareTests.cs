@@ -2,10 +2,8 @@ using System.Net;
 using System.Text.Json;
 using FluentValidation;
 using FluentValidation.Results;
-using IOMate.Api.Extensions;
 using IOMate.Application.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Xunit;
 
 public class ExceptionMiddlewareTests
 {

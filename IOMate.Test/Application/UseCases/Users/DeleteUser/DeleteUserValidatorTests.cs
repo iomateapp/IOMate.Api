@@ -1,11 +1,14 @@
 using FluentValidation.TestHelper;
 using IOMate.Application.UseCases.Users.DeleteUser;
-using System;
-using Xunit;
 
-public class DeleteUserValidatorTests
+public class DeleteUserValidatorTests : ValidationTestBase
 {
-    private readonly DeleteUserValidator _validator = new();
+    private readonly DeleteUserValidator _validator;
+
+    public DeleteUserValidatorTests()
+    {
+        _validator = new DeleteUserValidator(Localizer);
+    }
 
     [Fact]
     public void Should_Have_Error_When_Id_Is_Empty()

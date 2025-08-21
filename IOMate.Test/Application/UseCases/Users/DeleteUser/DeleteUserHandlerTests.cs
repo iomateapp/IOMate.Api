@@ -3,7 +3,6 @@ using IOMate.Application.UseCases.Users.DeleteUser;
 using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using Moq;
-using Xunit;
 
 public class DeleteUserHandlerTests
 {

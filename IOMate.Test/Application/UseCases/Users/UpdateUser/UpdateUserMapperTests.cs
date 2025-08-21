@@ -1,7 +1,6 @@
 using AutoMapper;
 using IOMate.Application.UseCases.Users.UpdateUser;
 using IOMate.Domain.Entities;
-using Xunit;
 
 public class UpdateUserMapperTests
 {

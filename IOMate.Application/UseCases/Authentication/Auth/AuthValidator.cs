@@ -3,9 +3,9 @@ using IOMate.Application.Resources;
 using IOMate.Application.UseCases.Authentication.Auth;
 using Microsoft.Extensions.Localization;
 
-public class AuthenticationValidator : AbstractValidator<AuthRequestDto>
+public class AuthValidator : AbstractValidator<AuthRequestDto>
 {
-    public AuthenticationValidator(IStringLocalizer<Messages> localizer)
+    public AuthValidator(IStringLocalizer<Messages> localizer)
     {
         RuleFor(u => u.Email)
             .NotEmpty()

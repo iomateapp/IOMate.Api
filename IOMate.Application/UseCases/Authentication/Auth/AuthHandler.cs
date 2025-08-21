@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using IOMate.Application.Shared.Exceptions;
-using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using MediatR;
 
