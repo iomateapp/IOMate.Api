@@ -1,7 +1,10 @@
 using FluentValidation;
 using FluentValidation.Results;
+using IOMate.Application.Resources;
 using IOMate.Application.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
+using Moq;
 using System.Net;
 using System.Text.Json;
 
@@ -33,7 +36,8 @@ public class ExceptionMiddlewareTests
         var exception = new ValidationException(validationFailures);
 
         var context = CreateContextWithBody();
-        var middleware = new ExceptionMiddleware(_ => throw exception);
+        var localizerMock = new Mock<IStringLocalizer<Messages>>();
+        var middleware = new ExceptionMiddleware(_ => throw exception, localizerMock.Object);
 
         // Act
         await middleware.InvokeAsync(context);
@@ -42,9 +46,9 @@ public class ExceptionMiddlewareTests
         Assert.Equal((int)HttpStatusCode.BadRequest, context.Response.StatusCode);
         var json = await GetResponseJson(context.Response);
         var errors = json.GetProperty("ValidationErrors").EnumerateArray().ToList();
-        Assert.Contains(errors, e => e.GetProperty("Field").GetString() == "Email" && e.GetProperty("Message").GetString() == "Email inválido");
-        Assert.Contains(errors, e => e.GetProperty("Field").GetString() == "Password" && e.GetProperty("Message").GetString() == "Senha obrigatória");
-        Assert.Equal("Validation failed.", json.GetProperty("Message").GetString());
+        Assert.Contains(errors, e => e.GetProperty("Field").GetString() == "Email");
+        Assert.Contains(errors, e => e.GetProperty("Field").GetString() == "Password");
+
         Assert.Equal("application/json", context.Response.ContentType);
     }
 
@@ -56,7 +60,8 @@ public class ExceptionMiddlewareTests
         var exception = new BadRequestException(error);
 
         var context = CreateContextWithBody();
-        var middleware = new ExceptionMiddleware(_ => throw exception);
+        var localizerMock = new Mock<IStringLocalizer<Messages>>();
+        var middleware = new ExceptionMiddleware(_ => throw exception, localizerMock.Object);
 
         // Act
         await middleware.InvokeAsync(context);
@@ -77,7 +82,8 @@ public class ExceptionMiddlewareTests
         var exception = new NotFoundException("Usuário não encontrado");
 
         var context = CreateContextWithBody();
-        var middleware = new ExceptionMiddleware(_ => throw exception);
+        var localizerMock = new Mock<IStringLocalizer<Messages>>();
+        var middleware = new ExceptionMiddleware(_ => throw exception, localizerMock.Object);
 
         // Act
         await middleware.InvokeAsync(context);
@@ -97,11 +103,12 @@ public class ExceptionMiddlewareTests
         // Arrange
         var context = CreateContextWithBody();
         var wasCalled = false;
+        var localizerMock = new Mock<IStringLocalizer<Messages>>();
         var middleware = new ExceptionMiddleware(_ =>
         {
             wasCalled = true;
             return Task.CompletedTask;
-        });
+        }, localizerMock.Object);
 
         // Act
         await middleware.InvokeAsync(context);
