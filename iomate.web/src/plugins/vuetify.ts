@@ -17,6 +17,9 @@ export default createVuetify({
   theme: {
     defaultTheme: 'system',
   },
+  icons: {
+    defaultSet: 'mdi',
+  },
   components: {
     VAppBar: {
       elevation: 2,

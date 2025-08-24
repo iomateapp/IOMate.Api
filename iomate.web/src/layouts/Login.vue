@@ -13,12 +13,12 @@
             </v-avatar>
           </v-row>
 
-          <v-form ref="formRef" v-model="valid" lazy-validation>
+          <v-form ref="formRef" lazy-validation>
             <v-text-field
-              v-model="credentials.username"
-              label="Username"
+              v-model="credentials.email"
+              label="Email"
               type="text"
-              :rules="usernameRules"
+              :error-messages="fieldErrors.email"
               required
               prepend-inner-icon="mdi-account"
             />
@@ -29,7 +29,7 @@
                 label="Password"
                 :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 @click:append-inner="showPassword = !showPassword"
-                :rules="passwordRules"
+                :error-messages="fieldErrors.password"
                 required
                 prepend-inner-icon="mdi-lock"
             />
@@ -37,7 +37,7 @@
             <v-btn
               class="mt-4"
               :loading="loading"
-              :disabled="!valid || loading"
+              :disabled="loading"
               color="primary"
               large
               block
@@ -53,23 +53,27 @@
         </v-card>
       </v-col>
     </v-row>
+  <!-- Snackbar global agora é exibido em App.vue -->
   </v-container>
 </template>
 
 <script setup>
+
 
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import logo from '@/assets/iomate-logo-icon.png';
 import authService from '@/services/authService';
 import { useAuth } from '@/contexts/authContext';
+import { useGlobalSnackbar } from '@/contexts/globalSnackbar';
 
 const router = useRouter();
 const formRef = ref(null);
-const valid = ref(false);
 const loading = ref(false);
 const showPassword = ref(false);
 const error = ref('');
+const snackbar = useGlobalSnackbar();
+const fieldErrors = reactive({ email: [], password: [] });
 
 const { setAuth } = useAuth();
 
@@ -78,18 +82,10 @@ const credentials = reactive({
   password: ''
 });
 
-const emailRules = [
-  v => !!v || 'Email is required',
-  v => /\S+@\S+\.\S+/.test(v) || 'Invalid email',
-];
-
-const passwordRules = [
-  v => !!v || 'Password is required',
-  v => (v && v.length >= 6) || 'Password must be at least 6 characters',
-];
-
 async function onSubmit() {
   error.value = '';
+  fieldErrors.email = [];
+  fieldErrors.password = [];
   if (!formRef.value) return;
 
   const validForm = await formRef.value.validate();
@@ -98,18 +94,31 @@ async function onSubmit() {
   loading.value = true;
   try {
     const data = await authService.authenticate({
-      email: credentials.username,
+      email: credentials.email,
       password: credentials.password,
     });
 
-      if (data && data.token) {
-        setAuth({ token: data.token });
-        router.push({ path: '/' });
-      } else {
-        error.value = 'Unexpected server response.';
-      }
+    if (data && data.token) {
+      setAuth({ token: data.token });
+      router.push({ path: '/' });
+    } else {
+      error.value = 'Unexpected server response.';
+    }
   } catch (err) {
-    error.value = err.message || 'Login failed. Please check your credentials.';
+    let response = err?.response?.data || err;
+    if (response?.ValidationErrors) {
+      for (const fieldError of response.ValidationErrors) {
+        const field = fieldError.Field?.toLowerCase();
+        if (fieldErrors[field]) {
+          fieldErrors[field].push(fieldError.Message);
+        }
+      }
+    }
+    if (response?.Message) {
+      snackbar.notify(response.Message, { color: 'error' });
+    } else {
+      error.value = err.message || 'Login failed. Please check your credentials.';
+    }
   } finally {
     loading.value = false;
   }
