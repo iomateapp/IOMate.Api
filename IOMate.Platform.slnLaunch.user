@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "Novo Perfil",
+    "Projects": [
+      {
+        "Path": "IOMate.Api\\IOMate.Api.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

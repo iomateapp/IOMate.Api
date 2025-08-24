@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36202.13 d17.14
+VisualStudioVersion = 17.14.36202.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOMate.Domain", "IOMate.Domain\IOMate.Domain.csproj", "{A7F2EEF9-BC86-4462-B17D-114A17CFC3A2}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOMate.Api", "IOMate.Api\IOMate.Api.csproj", "{490E5389-4215-4F49-8E67-D8A4A7944DF6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOMate.Test", "IOMate.Test\IOMate.Test.csproj", "{039D2F6B-C0F2-4413-BE04-33BD71F5AD01}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "iomate.web", "IOMate.Web\iomate.web.esproj", "{4C4FF92B-DFC3-28C4-568C-6A01733E796D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,12 @@ Global
 		{039D2F6B-C0F2-4413-BE04-33BD71F5AD01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{039D2F6B-C0F2-4413-BE04-33BD71F5AD01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{039D2F6B-C0F2-4413-BE04-33BD71F5AD01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C4FF92B-DFC3-28C4-568C-6A01733E796D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C4FF92B-DFC3-28C4-568C-6A01733E796D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C4FF92B-DFC3-28C4-568C-6A01733E796D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4C4FF92B-DFC3-28C4-568C-6A01733E796D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C4FF92B-DFC3-28C4-568C-6A01733E796D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C4FF92B-DFC3-28C4-568C-6A01733E796D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

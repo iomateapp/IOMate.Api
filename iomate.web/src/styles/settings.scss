@@ -1,0 +1,26 @@
+// filepath: c:\iomatedev\iomate.web\src\styles\settings.scss
+/**
+ * src/styles/settings.scss
+ *
+ * Configures SASS variables and Vuetify overwrites
+ */
+
+// Vuetify SASS Variables
+$body-font-family: 'Roboto', sans-serif;
+$font-size-root: 16px;
+$primary-color: #1976D2; // Default primary color
+$secondary-color: #424242; // Default secondary color
+$accent-color: #82B1FF; // Default accent color
+$error-color: #FF5252; // Default error color
+$info-color: #2196F3; // Default info color
+$success-color: #4CAF50; // Default success color
+$warning-color: #FFC107; // Default warning color
+
+// Custom styles
+$drawer-width: 240px; // Width of the navigation drawer
+$topbar-height: 64px; // Height of the top bar
+
+// Import Vuetify settings
+@use 'vuetify/settings' with (
+  $color-pack: false
+);
