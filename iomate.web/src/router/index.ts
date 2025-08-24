@@ -58,7 +58,7 @@ router.isReady().then(() => {
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-  const token = authorizationStorage.getAccessToken();
+  const token = authorizationStorage.getToken();
 
 
   if (requiresAuth && !token) {

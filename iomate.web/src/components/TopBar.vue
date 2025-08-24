@@ -24,7 +24,7 @@
               Edit Account
             </v-btn>
             <v-divider class="my-3"></v-divider>
-            <v-btn variant="text" rounded @click="logout">
+            <v-btn variant="text" rounded @click="actLogout">
               Disconnect
             </v-btn>
           </div>
@@ -35,8 +35,9 @@
 </template>
 
 <script setup>
+import { useAuth } from '@/contexts/authContext';
 import router from '@/router';
-import userService from '@/services/userService';
+const { logout } = useAuth();
 
 const user = {
   initials: 'JD',
@@ -44,8 +45,8 @@ const user = {
   email: 'john.doe@doe.com',
 }
 
-function logout() {
-  userService.logout();
+function actLogout() {
+  logout();
   router.push({ path: '/login' });
 }
 </script>

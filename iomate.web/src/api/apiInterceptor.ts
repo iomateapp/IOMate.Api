@@ -19,7 +19,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 api.interceptors.request.use(
     config => {
-        const token = authorizationStorage.getAccessToken();
+        const token = authorizationStorage.getToken();
         if (token) {
             config.headers['Authorization'] = token;
         }

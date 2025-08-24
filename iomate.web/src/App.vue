@@ -7,5 +7,6 @@
 </template>
 
 <script lang="ts" setup>
-  //
+import { provideAuth } from '@/contexts/authContext';
+provideAuth();
 </script>

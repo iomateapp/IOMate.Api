@@ -75,7 +75,7 @@ const selectedUser = ref({});
 onMounted(loadUsers);
 
 async function loadUsers() {
-  users.value = await userService.getUsers();
+  users.value = await userService.getAll();
 }
 
 function openCreate() {

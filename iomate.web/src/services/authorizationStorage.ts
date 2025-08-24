@@ -1,23 +1,17 @@
 export default {
-    setTokens(accessToken: string, refreshToken: string) {
-        localStorage.setItem('auth_token', `Bearer ${accessToken}`);
-        localStorage.setItem('refresh_token', refreshToken);
+    setTokens(token: string) {
+        localStorage.setItem('token', `Bearer ${token}`);
     },
 
     clearTokens() {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token');
     },
 
     logout() {
         this.clearTokens();
     },
 
-    getAccessToken(): string | null {
-        return localStorage.getItem('auth_token');
+    getToken(): string | null {
+        return localStorage.getItem('token');
     },
-
-    getRefreshToken(): string | null {
-        return localStorage.getItem('refresh_token');
-    }
 }

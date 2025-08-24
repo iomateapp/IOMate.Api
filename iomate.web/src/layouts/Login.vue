@@ -57,10 +57,12 @@
 </template>
 
 <script setup>
+
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import logo from '@/assets/iomate-logo-icon.png';
-import userService from '@/services/userService';
+import authService from '@/services/authService';
+import { useAuth } from '@/contexts/authContext';
 
 const router = useRouter();
 const formRef = ref(null);
@@ -69,10 +71,11 @@ const loading = ref(false);
 const showPassword = ref(false);
 const error = ref('');
 
+const { setAuth } = useAuth();
+
 const credentials = reactive({
   email: '',
-  password: '',
-  remember: false,
+  password: ''
 });
 
 const emailRules = [
@@ -94,18 +97,17 @@ async function onSubmit() {
 
   loading.value = true;
   try {
-    const data = await userService.login({
+    const data = await authService.authenticate({
       email: credentials.username,
       password: credentials.password,
-      remember: credentials.remember,
     });
 
-    if (data && data.accessToken) {
-      localStorage.setItem('auth_token', `Bearer ${data.accessToken}`);
-      router.push({ path: '/' });
-    } else {
-      error.value = 'Unexpected server response.';
-    }
+      if (data && data.token) {
+        setAuth({ token: data.token });
+        router.push({ path: '/' });
+      } else {
+        error.value = 'Unexpected server response.';
+      }
   } catch (err) {
     error.value = err.message || 'Login failed. Please check your credentials.';
   } finally {
