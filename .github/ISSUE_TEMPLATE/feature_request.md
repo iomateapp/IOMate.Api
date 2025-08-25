@@ -2,7 +2,7 @@
 name: Feature request
 about: Propose a new feature or improvement for the IOMate platform to enhance its functionality or user experience
 title: 'FEATURE: '
-labels: 'Type: Feature'
+labels: 'Feature'
 assignees: ''
 
 ---

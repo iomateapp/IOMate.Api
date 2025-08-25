@@ -2,7 +2,7 @@
 name: Enhancement
 about: Suggest an improvement or optimization for the IOMate platform that is not a new feature or bug fix
 title: 'ENHANCEMENT: '
-labels: 'Type: Enhancement'
+labels: 'Enhancement'
 assignees: ''
 ---
 

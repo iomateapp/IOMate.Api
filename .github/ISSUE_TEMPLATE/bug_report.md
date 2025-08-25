@@ -2,7 +2,7 @@
 name: Bug report
 about: Report a problem or unexpected behavior in the IOMate platform so we can investigate and fix it
 title: 'BUG: '
-labels: 'Type: Bug'
+labels: 'Bug'
 assignees: ''
 
 ---

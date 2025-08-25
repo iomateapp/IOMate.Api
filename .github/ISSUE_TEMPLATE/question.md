@@ -1,7 +1,7 @@
 name: Question request
 about: Ask a question or request clarification about the IOMate platform, its usage, or technical details
 title: 'QUESTION: '
-labels: 'Type: Question'
+labels: 'Question'
 assignees: ''
 
 
