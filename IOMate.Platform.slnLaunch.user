@@ -5,6 +5,10 @@
       {
         "Path": "IOMate.Api\\IOMate.Api.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "IOMate.Web\\iomate.web.esproj",
+        "Action": "Start"
       }
     ]
   }
