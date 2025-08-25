@@ -14,20 +14,17 @@ IOMate is a platform for Robotic Process Automation (RPA), designed to automate 
 ## Getting Started
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/iomateapp/IOMate.Api.git
+   git clone https://github.com/iomateapp/IOMate.Platform.git
    ```
-2. **Install dependencies:**
-   - .NET SDK (latest LTS recommended)
-   - Any other dependencies as described in the documentation
-3. **Build the solution:**
+2. **Build the solution:**
    ```sh
    dotnet build IOMate.Platform.sln
    ```
-4. **Run the API:**
+3. **Run the API:**
    ```sh
    dotnet run --project IOMate.Api/IOMate.Api.csproj
    ```
-5. **Run tests:**
+4. **Run tests:**
    ```sh
    dotnet test IOMate.Test/IOMate.Test.csproj
    ```
