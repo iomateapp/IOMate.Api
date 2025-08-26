@@ -3,6 +3,7 @@ using IOMate.Application.Shared.Dtos;
 using IOMate.Application.UseCases.Users.CreateUser;
 using IOMate.Application.UseCases.Users.DeleteUser;
 using IOMate.Application.UseCases.Users.GetAllUsers;
+using IOMate.Application.UseCases.Users.GetUserById;
 using IOMate.Application.UseCases.Users.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -125,5 +126,37 @@ public class UsersControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(response, okResult.Value);
+    }
+
+    [Fact]
+    public async Task GetById_ReturnsOk_WhenUserExists()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var response = new GetUserByIdResponseDto { Id = id, Email = "test@email.com" };
+        _mediatorMock.Setup(m => m.Send(It.Is<GetUserByIdRequestDto>(r => r.Id == id), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.GetById(id, default);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        Assert.Equal(response, okResult.Value);
+    }
+
+    [Fact]
+    public async Task GetById_ReturnsNotFound_WhenUserDoesNotExist()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _mediatorMock.Setup(m => m.Send(It.Is<GetUserByIdRequestDto>(r => r.Id == id), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((GetUserByIdResponseDto)null!);
+
+        // Act
+        var result = await _controller.GetById(id, default);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(result.Result);
     }
 }
