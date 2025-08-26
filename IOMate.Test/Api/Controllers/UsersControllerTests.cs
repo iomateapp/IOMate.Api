@@ -45,7 +45,7 @@ public class UsersControllerTests
     public async Task GetAll_UsesDefaultPaging()
     {
         // Arrange
-            var pagedResponse = new PagedResponseDto<GetAllUsersResponseDto>
+        var pagedResponse = new PagedResponseDto<GetAllUsersResponseDto>
         {
             Results = new List<GetAllUsersResponseDto>(),
             TotalCount = 0,
