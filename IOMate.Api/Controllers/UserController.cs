@@ -1,10 +1,11 @@
+using IOMate.Application.UseCases.Users.CreateUser;
+using IOMate.Application.UseCases.Users.DeleteUser;
+using IOMate.Application.UseCases.Users.GetAllUsers;
+using IOMate.Application.UseCases.Users.GetUserById;
+using IOMate.Application.UseCases.Users.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using IOMate.Application.UseCases.Users.UpdateUser;
-using IOMate.Application.UseCases.Users.GetAllUsers;
-using IOMate.Application.UseCases.Users.CreateUser;
-using IOMate.Application.UseCases.Users.DeleteUser;
 
 namespace IOMate.Api.Controllers;
 
@@ -54,6 +55,18 @@ public class UsersController : ControllerBase
         var deleteUserRequest = new DeleteUserRequestDto(id.Value);
 
         var response = await _mediator.Send(deleteUserRequest, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<GetUserByIdResponseDto>> GetById(Guid id, CancellationToken cancellationToken = default)
+    {
+        var request = new GetUserByIdRequestDto(id);
+        var response = await _mediator.Send(request, cancellationToken);
+
+        if (response == null)
+            return NotFound();
+
         return Ok(response);
     }
 }

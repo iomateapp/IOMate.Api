@@ -1,8 +1,3 @@
----
-name: Pull Request
-about: Submit a pull request to propose code changes to the IOMate platform
----
-
 ## Description
 Briefly describe the changes you are proposing. Include context, motivation, and any relevant background.
 
