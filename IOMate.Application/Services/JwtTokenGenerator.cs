@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace IOMate.Application.Services
 {
@@ -18,49 +19,37 @@ namespace IOMate.Application.Services
         }
 
         public string GenerateToken(User user)
-        {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["Secret"];
-            var issuer = jwtSettings["Issuer"];
-            var audience = jwtSettings["Audience"];
-            var expires = DateTime.UtcNow.AddHours(2);
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("typ", "access")
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+            => GenerateJwt(user, "access", DateTime.UtcNow.AddHours(2));
 
         public string GenerateRefreshToken(User user)
+            => GenerateJwt(user, "refresh", DateTime.UtcNow.AddDays(7));
+
+        private string GenerateJwt(User user, string typ, DateTime expires)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["Secret"];
             var issuer = jwtSettings["Issuer"];
             var audience = jwtSettings["Audience"];
-            var expires = DateTime.UtcNow.AddDays(7);
+
+            var userToSerialize = new
+            {
+                user.Id,
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.DateCreated,
+                user.DateModified,
+                user.DateDeleted
+            };
+            var userJson = JsonSerializer.Serialize(userToSerialize);
 
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("typ", "refresh")
+                new Claim("typ", typ),
+                new Claim("user", userJson)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
