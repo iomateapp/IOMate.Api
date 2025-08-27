@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.Results;
+using IOMate.Api.Extensions;
 using IOMate.Application.Resources;
 using IOMate.Application.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
@@ -139,5 +140,30 @@ public class ExceptionMiddlewareTests
 
         responseStream.Seek(0, SeekOrigin.Begin);
         var responseBody = await new StreamReader(responseStream).ReadToEndAsync();
+    }
+
+    [Fact]
+    public async Task InvokeAsync_Should_Handle_UnauthorizedException()
+    {
+        // Arrange
+        var exception = new UnauthorizedException("Acesso não autorizado");
+        var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+
+        var localizerMock = new Mock<IStringLocalizer<Messages>>();
+        var middleware = new ExceptionMiddleware(_ => throw exception, localizerMock.Object);
+
+        // Act
+        await middleware.InvokeAsync(context);
+
+        // Assert
+        Assert.Equal((int)HttpStatusCode.Unauthorized, context.Response.StatusCode);
+
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var json = JsonSerializer.Deserialize<JsonElement>(responseBody);
+
+        Assert.Equal("Acesso não autorizado", json.GetProperty("Message").GetString());
+        Assert.Equal("application/json", context.Response.ContentType);
     }
 }

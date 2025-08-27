@@ -1,13 +1,15 @@
 using FluentValidation;
+using IOMate.Application.Resources;
+using Microsoft.Extensions.Localization;
 
 namespace IOMate.Application.UseCases.Authentication.Refresh
 {
     public class RefreshTokenRequestDtoValidator : AbstractValidator<RefreshTokenRequestDto>
     {
-        public RefreshTokenRequestDtoValidator()
+        public RefreshTokenRequestDtoValidator(IStringLocalizer<Messages> localizer)
         {
             RuleFor(x => x.RefreshToken)
-                .NotEmpty().WithMessage("O refresh token é obrigatório.");
+                .NotEmpty().WithMessage(localizer["RequiredField", "RefreshToken"]);
         }
     }
 }

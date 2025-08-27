@@ -1,6 +1,9 @@
+using IOMate.Application.Resources;
+using IOMate.Application.Shared.Exceptions;
 using IOMate.Application.UseCases.Authentication.Refresh;
 using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
+using Microsoft.Extensions.Localization;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -30,7 +33,9 @@ public class RefreshTokenHandlerTests
         var userRepositoryMock = new Mock<IUserRepository>();
         userRepositoryMock.Setup(r => r.GetByIdAsync(userId, default)).ReturnsAsync(user);
 
-        var handler = new RefreshTokenHandler(jwtTokenGeneratorMock.Object, userRepositoryMock.Object);
+        var stringLocalizerMock = new Mock<IStringLocalizer<Messages>>();
+
+        var handler = new RefreshTokenHandler(jwtTokenGeneratorMock.Object, userRepositoryMock.Object, stringLocalizerMock.Object);
 
         var request = new RefreshTokenRequestDto { RefreshToken = refreshToken };
 
@@ -52,12 +57,14 @@ public class RefreshTokenHandlerTests
             .Returns((ClaimsPrincipal?)null);
 
         var userRepositoryMock = new Mock<IUserRepository>();
-        var handler = new RefreshTokenHandler(jwtTokenGeneratorMock.Object, userRepositoryMock.Object);
+        var stringLocalizerMock = new Mock<IStringLocalizer<Messages>>();
+
+        var handler = new RefreshTokenHandler(jwtTokenGeneratorMock.Object, userRepositoryMock.Object, stringLocalizerMock.Object);
 
         var request = new RefreshTokenRequestDto { RefreshToken = "invalid-token" };
 
         // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => handler.Handle(request, default));
+        await Assert.ThrowsAsync<UnauthorizedException>(() => handler.Handle(request, default));
     }
 
     [Fact]
@@ -78,11 +85,13 @@ public class RefreshTokenHandlerTests
         var userRepositoryMock = new Mock<IUserRepository>();
         userRepositoryMock.Setup(r => r.GetByIdAsync(userId, default)).ReturnsAsync((User?)null);
 
-        var handler = new RefreshTokenHandler(jwtTokenGeneratorMock.Object, userRepositoryMock.Object);
+        var stringLocalizerMock = new Mock<IStringLocalizer<Messages>>();
+
+        var handler = new RefreshTokenHandler(jwtTokenGeneratorMock.Object, userRepositoryMock.Object, stringLocalizerMock.Object);
 
         var request = new RefreshTokenRequestDto { RefreshToken = refreshToken };
 
         // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => handler.Handle(request, default));
+        await Assert.ThrowsAsync<UnauthorizedException>(() => handler.Handle(request, default));
     }
 }
