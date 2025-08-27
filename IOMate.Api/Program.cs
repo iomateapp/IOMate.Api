@@ -20,6 +20,9 @@ builder.Services.ConfigureJwt(builder.Configuration);
 
 builder.Services.AddLocalization();
 
+builder.Services.AddHttpContextAccessor();
+CurrentUserContext.Configure(builder.Services.BuildServiceProvider().GetRequiredService<IHttpContextAccessor>());
+
 var app = builder.Build();
 
 CreateDatabase(app);
