@@ -150,4 +150,10 @@
   <data name="UnexpectedError" xml:space="preserve">
     <value>An unexpected error occurred.</value>
   </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid refresh token.</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Não autorizado.</value>
+  </data>
 </root>

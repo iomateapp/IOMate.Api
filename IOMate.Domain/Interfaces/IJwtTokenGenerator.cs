@@ -1,14 +1,12 @@
 ﻿using IOMate.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace IOMate.Domain.Interfaces
 {
     public interface IJwtTokenGenerator
     {
         string GenerateToken(User user);
+        string GenerateRefreshToken(User user);
+        ClaimsPrincipal? GetPrincipalFromExpiredToken(string token, bool isRefreshToken = false);
     }
 }

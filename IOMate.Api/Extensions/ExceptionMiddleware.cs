@@ -5,6 +5,8 @@ using Microsoft.Extensions.Localization;
 using System.Net;
 using System.Text.Json;
 
+namespace IOMate.Api.Extensions;
+
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -39,6 +41,12 @@ public class ExceptionMiddleware
             await WriteErrorResponseAsync(httpContext, HttpStatusCode.NotFound,
                 Enumerable.Empty<object>(),
                 ex.Message ?? _localizer["ResourceNotFound"]);
+        }
+        catch (UnauthorizedException ex)
+        {
+            await WriteErrorResponseAsync(httpContext, HttpStatusCode.Unauthorized,
+                Enumerable.Empty<object>(),
+                ex.Message ?? _localizer["Unauthorized"]);
         }
         catch (Exception)
         {
