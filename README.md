@@ -24,9 +24,16 @@ IOMate is a platform for Robotic Process Automation (RPA), designed to automate 
    ```sh
    dotnet run --project IOMate.Api/IOMate.Api.csproj
    ```
+
 4. **Run tests:**
    ```sh
-   dotnet test IOMate.Test/IOMate.Test.csproj
+   dotnet test --collect:"XPlat Code Coverage"
+   ```
+
+5. **Generate coverage report:**
+   After running the tests, you can generate a coverage report using [reportgenerator](https://github.com/danielpalme/ReportGenerator):
+   ```sh
+   reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coveragereport -filefilters:"-**/ServiceExtensions.cs;-**/Program.cs"
    ```
 
 ## Migration

@@ -117,4 +117,27 @@ public class ExceptionMiddlewareTests
         Assert.True(wasCalled);
         Assert.Equal(200, context.Response.StatusCode);
     }
+
+    [Fact]
+    public async Task InvokeAsync_ShouldReturnInternalServerError_OnException()
+    {
+        // Arrange
+        var context = new DefaultHttpContext();
+        var responseStream = new MemoryStream();
+        context.Response.Body = responseStream;
+
+        var localizerMock = new Mock<IStringLocalizer<Messages>>();
+        RequestDelegate next = _ => throw new Exception("fail");
+
+        var middleware = new ExceptionMiddleware(next, localizerMock.Object);
+
+        // Act
+        await middleware.InvokeAsync(context);
+
+        // Assert
+        Assert.Equal((int)HttpStatusCode.InternalServerError, context.Response.StatusCode);
+
+        responseStream.Seek(0, SeekOrigin.Begin);
+        var responseBody = await new StreamReader(responseStream).ReadToEndAsync();
+    }
 }

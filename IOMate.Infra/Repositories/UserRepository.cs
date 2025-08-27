@@ -1,6 +1,4 @@
-﻿
-
-using IOMate.Domain.Entities;
+﻿using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using IOMate.Infra.Context;
 using Microsoft.EntityFrameworkCore;
