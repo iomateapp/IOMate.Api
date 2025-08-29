@@ -1,4 +1,5 @@
-import * as React from 'react';
+import { useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 import { 
   Box, 
   Button, 
@@ -11,6 +12,23 @@ import {
   Card as MuiCard 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { redirect, useRouter, useRouterState } from '@tanstack/react-router'
+import { z } from 'zod'
+import { useAuth } from '../auth'
+
+const fallback = '/dashboard' as const
+
+export const Route = createFileRoute('/login')({
+  validateSearch: z.object({
+    redirect: z.string().optional().catch(''),
+  }),
+  beforeLoad: ({ context, search }) => {
+    if (context.auth.isAuthenticated) {
+      throw redirect({ to: search.redirect || fallback })
+    }
+  },
+  component: LoginComponent,
+})
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -54,23 +72,52 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function Login() {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
+function LoginComponent() {
+  const auth = useAuth()
+  const router = useRouter()
+  const isLoading = useRouterState({ select: (s) => s.isLoading })
+  const navigate = Route.useNavigate()
+
+  const [emailError, setEmailError] = useState(false)
+  const [emailErrorMessage, setEmailErrorMessage] = useState('')
+  const [passwordError, setPasswordError] = useState(false)
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
+  
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const search = Route.useSearch()
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setIsSubmitting(true)
+    try {
+      event.preventDefault()
+      const data = new FormData(event.currentTarget)
+      const email = data.get('email')
+      const password = data.get('password')
+
+      if (!email || !password) return
+
+      console.log({email: email.toString(), password: password.toString()})
+
+      await auth.login(email.toString())
+
+      await router.invalidate()
+
+      // This is just a hack being used to wait for the auth state to update
+      // in a real app, you'd want to use a more robust solution
+      await sleep(1)
+
+      await navigate({ to: search.redirect || fallback })
+    } catch (error) {
+      console.error('Error logging in: ', error)
+    } finally {
+      setIsSubmitting(false)
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  }
 
   const validateInputs = () => {
     const email = document.getElementById('email') as HTMLInputElement;
@@ -99,6 +146,8 @@ export default function Login() {
     return isValid;
   };
 
+  const isLoggingIn = isLoading || isSubmitting
+
   return (
     <>
       <CssBaseline enableColorScheme />
@@ -111,6 +160,11 @@ export default function Login() {
           >
             Sign in
           </Typography>
+          {search.redirect ? (
+            <p className="text-red-500">You need to login to access this page.</p>
+          ) : (
+            <p>Login to see all the cool content in here.</p>
+          )}
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -162,11 +216,11 @@ export default function Login() {
               variant="contained"
               onClick={validateInputs}
             >
-              Sign in
+              {isLoggingIn ? 'Loading...' : 'Login'}
             </Button>
           </Box>
         </Card>
       </SignInContainer>
     </>
-  );
+  )
 }
