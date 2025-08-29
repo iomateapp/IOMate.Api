@@ -1,22 +1,23 @@
-﻿using IOMate.Domain.Entities;
+﻿using IOMate.Application.Security;
+using IOMate.Domain.Entities;
 using System.Text.Json;
 
 namespace IOMate.Api.Extensions
 {
-    public static class CurrentUserContext
+    public class CurrentUserContext : ICurrentUserContext
     {
-        private static IHttpContextAccessor? _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public static void Configure(IHttpContextAccessor accessor)
+        public CurrentUserContext(IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = accessor;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public static User? User
+        public User? User
         {
             get
             {
-                var principal = _httpContextAccessor?.HttpContext?.User;
+                var principal = _httpContextAccessor.HttpContext?.User;
                 if (principal == null)
                     return null;
 

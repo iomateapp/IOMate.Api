@@ -36,10 +36,7 @@ namespace IOMate.Application.Services
                 user.Id,
                 user.FirstName,
                 user.LastName,
-                user.Email,
-                user.DateCreated,
-                user.DateModified,
-                user.DateDeleted
+                user.Email
             };
             var userJson = JsonSerializer.Serialize(userToSerialize);
 
