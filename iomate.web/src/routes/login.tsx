@@ -101,9 +101,7 @@ function LoginComponent() {
 
       if (!email || !password) return
 
-      console.log({email: email.toString(), password: password.toString()})
-
-      await auth.login(email.toString())
+      await auth.login(email.toString(), password.toString())
 
       await router.invalidate()
 
