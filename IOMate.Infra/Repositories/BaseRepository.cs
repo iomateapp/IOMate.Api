@@ -20,19 +20,19 @@ namespace IOMate.Infra.Repositories
 
         public void Add(T entity)
         {
-            AddEventDynamic(entity, CurrentUserContext.User.Id, EventType.Created);
+            AddEvent(entity, EventType.Created);
             Context.Add(entity);
         }
 
         public void Update(T entity)
         {
-            AddEventDynamic(entity, CurrentUserContext.User.Id, EventType.Updated);
-            Context.Update(entity);
+            AddEvent(entity, EventType.Updated);
+            Context.Entry(entity).State = EntityState.Modified;
         }
 
         public void Delete(T entity)
         {
-            AddEventDynamic(entity, CurrentUserContext.User.Id, EventType.Deleted);
+            AddEvent(entity, EventType.Deleted);
             Context.Remove(entity);
         }
 
@@ -59,10 +59,16 @@ namespace IOMate.Infra.Repositories
             return await Context.Set<T>().ToListAsync(cancellationToken);
         }
 
-        private void AddEventDynamic(T entity, Guid ownerId, EventType type)
+        private void AddEvent(T entity, EventType type)
         {
+            var eventsProp = typeof(T).GetProperty("Events");
+            if (eventsProp == null) return;
+
+            var ownerId = CurrentUserContext.User?.Id ?? Guid.Empty;
+
             var eventType = typeof(EventEntity<>).MakeGenericType(typeof(T));
             var eventInstance = Activator.CreateInstance(eventType);
+            if (eventInstance == null) return;
 
             eventType.GetProperty("Id")?.SetValue(eventInstance, Guid.NewGuid());
             eventType.GetProperty("OwnerId")?.SetValue(eventInstance, ownerId);
@@ -71,9 +77,21 @@ namespace IOMate.Infra.Repositories
             eventType.GetProperty("EntityId")?.SetValue(eventInstance, entity.Id);
             eventType.GetProperty("Entity")?.SetValue(eventInstance, entity);
 
-            var eventsProp = typeof(T).GetProperty("Events");
-            var eventsList = eventsProp?.GetValue(entity) as System.Collections.IList;
+            var eventsList = eventsProp.GetValue(entity) as System.Collections.IList;
             eventsList?.Add(eventInstance);
+
+            var dbSet = Context.GetType().GetProperties()
+                .FirstOrDefault(p =>
+                    p.PropertyType.IsGenericType &&
+                    p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>) &&
+                    p.PropertyType.GenericTypeArguments[0] == eventType);
+
+            if (dbSet != null)
+            {
+                var set = dbSet.GetValue(Context);
+                var addMethod = set?.GetType().GetMethod("Add");
+                addMethod?.Invoke(set, new[] { eventInstance });
+            }
         }
     }
 }
