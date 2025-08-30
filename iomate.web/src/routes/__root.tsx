@@ -1,4 +1,4 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
+import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import type { AuthContext } from '../auth'
 
@@ -13,4 +13,12 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       <TanStackRouterDevtools position="bottom-right" initialIsOpen={false} />
     </>
   ),
+  notFoundComponent: () => {
+    return (
+      <div>
+        <p>There's nothing here!</p>
+        <Link to="/">Start Over</Link>
+      </div>
+    )
+  },
 })

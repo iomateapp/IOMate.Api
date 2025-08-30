@@ -4,13 +4,12 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { routeTree } from './routeTree.gen';
 import theme from './theme';
+import { AuthProvider, useAuth } from './auth';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import './index.css'
-import { AuthProvider, useAuth } from './auth';
 
 // Create a new router instance
 const router = createRouter({ 
