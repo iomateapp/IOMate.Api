@@ -2,6 +2,7 @@ using IOMate.Application.UseCases.Users.CreateUser;
 using IOMate.Application.UseCases.Users.DeleteUser;
 using IOMate.Application.UseCases.Users.GetAllUsers;
 using IOMate.Application.UseCases.Users.GetUserById;
+using IOMate.Application.UseCases.Users.GetUserEvents;
 using IOMate.Application.UseCases.Users.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -68,5 +69,12 @@ public class UsersController : ControllerBase
             return NotFound();
 
         return Ok(response);
+    }
+
+    [HttpGet("{id}/events")]
+    public async Task<ActionResult<List<GetUserEventResponseDto>>> GetUserEvents(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetUserEventsRequestDto(id), cancellationToken);
+        return Ok(result);
     }
 }
