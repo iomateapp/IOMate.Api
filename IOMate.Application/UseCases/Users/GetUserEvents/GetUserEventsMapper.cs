@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
-using IOMate.Application.UseCases.Users.GetUserEvents;
+using IOMate.Application.Shared.Dtos;
 using IOMate.Domain.Entities;
 
-namespace IOMate.Application.UseCases.Users.GetUserById
+namespace IOMate.Application.UseCases.Users.GetUserEvents
 {
     public sealed class GetUserEventsMapper : Profile
     {
         public GetUserEventsMapper()
         {
-            CreateMap<EventEntity<User>, GetUserEventResponseDto>();
-            CreateMap<GetUserEventResponseDto, EventEntity<User>>();
+            CreateMap<EventEntity<User>, GetEventResponseDto>();
+            CreateMap<User, UserOwnerDto>();
         }
     }
 }

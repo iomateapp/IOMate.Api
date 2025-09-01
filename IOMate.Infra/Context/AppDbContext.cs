@@ -13,6 +13,18 @@ namespace IOMate.Infra.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<EventEntity<User>>()
+                .HasOne(e => e.Entity)
+                .WithMany(u => u.Events)
+                .HasForeignKey(e => e.EntityId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<EventEntity<User>>()
+                .HasOne(e => e.Owner)
+                .WithMany()
+                .HasForeignKey(e => e.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

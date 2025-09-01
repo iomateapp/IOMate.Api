@@ -1,3 +1,4 @@
+using IOMate.Application.Shared.Dtos;
 using IOMate.Application.UseCases.Users.CreateUser;
 using IOMate.Application.UseCases.Users.DeleteUser;
 using IOMate.Application.UseCases.Users.GetAllUsers;
@@ -72,7 +73,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}/events")]
-    public async Task<ActionResult<List<GetUserEventResponseDto>>> GetUserEvents(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<GetEventResponseDto>>> GetUserEvents(Guid id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetUserEventsRequestDto(id), cancellationToken);
         return Ok(result);

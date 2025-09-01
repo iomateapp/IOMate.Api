@@ -118,14 +118,13 @@ namespace IOMate.Infra.Repositories
             var eventsProp = typeof(T).GetProperty("Events");
             if (eventsProp == null) return;
 
-            var ownerId = CurrentUserContext.User?.Id ?? Guid.Empty;
-
             var eventType = typeof(EventEntity<>).MakeGenericType(typeof(T));
             var eventInstance = Activator.CreateInstance(eventType);
             if (eventInstance == null) return;
 
             eventType.GetProperty("Id")?.SetValue(eventInstance, Guid.NewGuid());
-            eventType.GetProperty("OwnerId")?.SetValue(eventInstance, ownerId);
+            eventType.GetProperty("OwnerId")?.SetValue(eventInstance, CurrentUserContext.User?.Id);
+            eventType.GetProperty("Owner")?.SetValue(eventInstance, CurrentUserContext.User);
             eventType.GetProperty("Type")?.SetValue(eventInstance, type);
             eventType.GetProperty("Date")?.SetValue(eventInstance, DateTimeOffset.UtcNow);
             eventType.GetProperty("EntityId")?.SetValue(eventInstance, entity.Id);
