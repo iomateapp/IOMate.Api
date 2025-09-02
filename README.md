@@ -32,7 +32,7 @@ IOMate is a platform for Robotic Process Automation (RPA), designed to automate 
 5. **Generate coverage report:**
    After running the tests, you can generate a coverage report using [reportgenerator](https://github.com/danielpalme/ReportGenerator):
    ```sh
-   reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coveragereport -filefilters:"-**/ServiceExtensions.cs;-**/Program.cs"
+   reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coveragereport -filefilters:"-**/ServiceExtensions.cs;-**/Program.cs;-**/Migrations/**"
    ```
 
 ## Database Migrations
