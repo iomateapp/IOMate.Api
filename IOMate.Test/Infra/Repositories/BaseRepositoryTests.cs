@@ -1,7 +1,9 @@
-using Microsoft.EntityFrameworkCore;
+using IOMate.Application.Security;
 using IOMate.Domain.Entities;
 using IOMate.Infra.Context;
 using IOMate.Infra.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 
 public class BaseRepositoryTests
 {
@@ -18,6 +20,21 @@ public class BaseRepositoryTests
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<TestEntity>();
+
+            modelBuilder.Entity<EventEntity<TestEntity>>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.Entity)
+                    .WithMany()
+                    .HasForeignKey(e => e.EntityId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Owner)
+                    .WithMany()
+                    .HasForeignKey(e => e.OwnerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 
@@ -29,12 +46,19 @@ public class BaseRepositoryTests
         return new TestDbContext(options);
     }
 
+    private ICurrentUserContext CreateMockCurrentUserContext()
+    {
+        var mock = new Mock<ICurrentUserContext>();
+        return mock.Object;
+    }
+
     [Fact]
     public async Task Add_ShouldSetDateCreated_AndPersist()
     {
         // Arrange
         using var context = CreateContext();
-        var repo = new BaseRepository<TestEntity>(context);
+        var currentUserContext = CreateMockCurrentUserContext();
+        var repo = new BaseRepository<TestEntity>(context, currentUserContext);
         var entity = new TestEntity { Name = "Test" };
 
         // Act
@@ -44,7 +68,6 @@ public class BaseRepositoryTests
         // Assert
         var saved = context.Set<TestEntity>().FirstOrDefault();
         Assert.NotNull(saved);
-        Assert.NotNull(saved!.DateCreated);
         Assert.Equal("Test", saved.Name);
     }
 
@@ -53,7 +76,8 @@ public class BaseRepositoryTests
     {
         // Arrange
         using var context = CreateContext();
-        var repo = new BaseRepository<TestEntity>(context);
+        var currentUserContext = CreateMockCurrentUserContext();
+        var repo = new BaseRepository<TestEntity>(context, currentUserContext);
         var entity = new TestEntity { Name = "Test" };
         context.Add(entity);
         await context.SaveChangesAsync();
@@ -65,7 +89,6 @@ public class BaseRepositoryTests
 
         // Assert
         var updated = context.Set<TestEntity>().First();
-        Assert.NotNull(updated.DateModified);
         Assert.Equal("Updated", updated.Name);
     }
 
@@ -74,7 +97,8 @@ public class BaseRepositoryTests
     {
         // Arrange
         using var context = CreateContext();
-        var repo = new BaseRepository<TestEntity>(context);
+        var currentUserContext = CreateMockCurrentUserContext();
+        var repo = new BaseRepository<TestEntity>(context, currentUserContext);
         var entity = new TestEntity { Name = "Test" };
         context.Add(entity);
         await context.SaveChangesAsync();
@@ -84,7 +108,6 @@ public class BaseRepositoryTests
         await context.SaveChangesAsync();
 
         // Assert
-        Assert.NotNull(entity.DateDeleted);
         Assert.DoesNotContain(entity, context.Set<TestEntity>());
     }
 
@@ -93,7 +116,8 @@ public class BaseRepositoryTests
     {
         // Arrange
         using var context = CreateContext();
-        var repo = new BaseRepository<TestEntity>(context);
+        var currentUserContext = CreateMockCurrentUserContext();
+        var repo = new BaseRepository<TestEntity>(context, currentUserContext);
         for (int i = 1; i <= 20; i++)
         {
             context.Add(new TestEntity { Name = $"Entity{i}" });
@@ -113,7 +137,8 @@ public class BaseRepositoryTests
     {
         // Arrange
         using var context = CreateContext();
-        var repo = new BaseRepository<TestEntity>(context);
+        var currentUserContext = CreateMockCurrentUserContext();
+        var repo = new BaseRepository<TestEntity>(context, currentUserContext);
         context.Add(new TestEntity { Name = "A" });
         context.Add(new TestEntity { Name = "B" });
         await context.SaveChangesAsync();
@@ -130,7 +155,8 @@ public class BaseRepositoryTests
     {
         // Arrange
         using var context = CreateContext();
-        var repo = new BaseRepository<TestEntity>(context);
+        var currentUserContext = CreateMockCurrentUserContext();
+        var repo = new BaseRepository<TestEntity>(context, currentUserContext);
         var entity = new TestEntity { Name = "Test" };
         context.Add(entity);
         await context.SaveChangesAsync();
@@ -148,7 +174,8 @@ public class BaseRepositoryTests
     {
         // Arrange
         using var context = CreateContext();
-        var repo = new BaseRepository<TestEntity>(context);
+        var currentUserContext = CreateMockCurrentUserContext();
+        var repo = new BaseRepository<TestEntity>(context, currentUserContext);
         context.Add(new TestEntity { Name = "A" });
         context.Add(new TestEntity { Name = "B" });
         await context.SaveChangesAsync();

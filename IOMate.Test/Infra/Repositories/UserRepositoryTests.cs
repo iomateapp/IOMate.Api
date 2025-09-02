@@ -1,8 +1,7 @@
+using IOMate.Application.Security;
 using IOMate.Domain.Entities;
-using IOMate.Infra.Context;
 using IOMate.Infra.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
+using Moq;
 
 public class UserRepositoryTests : RepositoryTestBase
 {
@@ -11,10 +10,11 @@ public class UserRepositoryTests : RepositoryTestBase
     {
         // Arrange
         using var context = CreateContext();
+        var currentUserContextMock = new Mock<ICurrentUserContext>();
         var user = new User { Email = "test@email.com" };
         context.Users.Add(user);
         await context.SaveChangesAsync();
-        var repo = new UserRepository(context);
+        var repo = new UserRepository(context, currentUserContextMock.Object);
 
         // Act
         var result = await repo.GetByEmail("test@email.com", CancellationToken.None);
@@ -29,7 +29,8 @@ public class UserRepositoryTests : RepositoryTestBase
     {
         // Arrange
         using var context = CreateContext();
-        var repo = new UserRepository(context);
+        var currentUserContextMock = new Mock<ICurrentUserContext>();
+        var repo = new UserRepository(context, currentUserContextMock.Object);
 
         // Act
         var result = await repo.GetByEmail("notfound@email.com", CancellationToken.None);
