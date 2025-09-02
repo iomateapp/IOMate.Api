@@ -61,56 +61,12 @@ namespace IOMate.Infra.Repositories
 
         public async Task<List<object>> GetEntityEventsAsync(Guid entityId, CancellationToken cancellationToken)
         {
-            var eventType = typeof(EventEntity<>).MakeGenericType(typeof(T));
+            var events = await Context.Set<EventEntity<T>>()
+                .Where(e => e.EntityId == entityId)
+                .OrderByDescending(e => e.Date)
+                .ToListAsync(cancellationToken);
 
-            var dbSetProp = Context.GetType().GetProperties()
-                .FirstOrDefault(p =>
-                    p.PropertyType.IsGenericType &&
-                    p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>) &&
-                    p.PropertyType.GenericTypeArguments[0] == eventType);
-
-            if (dbSetProp == null)
-                return new List<object>();
-
-            var dbSet = dbSetProp.GetValue(Context);
-
-            var parameter = System.Linq.Expressions.Expression.Parameter(eventType, "e");
-            var property = eventType.GetProperty("EntityId");
-            var propertyAccess = System.Linq.Expressions.Expression.Property(parameter, property!);
-            var equals = System.Linq.Expressions.Expression.Equal(
-                propertyAccess,
-                System.Linq.Expressions.Expression.Constant(entityId)
-            );
-            var lambda = System.Linq.Expressions.Expression.Lambda(equals, parameter);
-
-            var whereMethod = typeof(Queryable).GetMethods()
-                .First(m => m.Name == "Where" && m.GetParameters().Length == 2)
-                .MakeGenericMethod(eventType);
-
-            var query = whereMethod.Invoke(null, new object[] { dbSet, lambda });
-
-            var dateProperty = eventType.GetProperty("Date");
-            var datePropertyAccess = System.Linq.Expressions.Expression.Property(parameter, dateProperty!);
-            var dateLambda = System.Linq.Expressions.Expression.Lambda(datePropertyAccess, parameter);
-
-            var orderByDescMethod = typeof(Queryable).GetMethods()
-                .First(m => m.Name == "OrderByDescending" && m.GetParameters().Length == 2)
-                .MakeGenericMethod(eventType, typeof(DateTimeOffset));
-
-            query = orderByDescMethod.Invoke(null, new object[] { query, dateLambda });
-
-            var toListAsyncMethod = typeof(EntityFrameworkQueryableExtensions)
-                .GetMethods()
-                .First(m => m.Name == "ToListAsync" && m.GetParameters().Length == 2)
-                .MakeGenericMethod(eventType);
-
-            var task = (Task)toListAsyncMethod.Invoke(null, new object[] { query, cancellationToken })!;
-            await task.ConfigureAwait(false);
-
-            var resultProp = task.GetType().GetProperty("Result");
-            var result = resultProp?.GetValue(task) as System.Collections.IEnumerable;
-
-            return result?.Cast<object>().ToList() ?? new List<object>();
+            return events.Cast<object>().ToList();
         }
 
         private void AddEvent(T entity, EventType type)

@@ -54,8 +54,6 @@ public class JwtTokenGeneratorTests
         // Assert
         Assert.False(string.IsNullOrWhiteSpace(refreshToken));
         Assert.Contains(".", refreshToken);
-
-        // Decodifica o token para garantir que a claim "typ" é "refresh"
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(refreshToken);
         var typClaim = jwt.Claims.FirstOrDefault(c => c.Type == "typ")?.Value;

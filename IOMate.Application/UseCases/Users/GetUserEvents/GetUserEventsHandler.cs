@@ -20,9 +20,8 @@ namespace IOMate.Application.UseCases.Users.GetUserEvents
         {
             var events = await _userRepository.GetUserEventsWithOwnerAsync(request.UserId, cancellationToken);
 
-            // Carregar os owners manualmente (caso não tenha navegação)
             var ownerIds = events.Select(e => e.OwnerId).Distinct().ToList();
-            var owners = await _userRepository.GetOwnersByIdsAsync(ownerIds, cancellationToken); // Implemente esse método no repositório
+            var owners = await _userRepository.GetOwnersByIdsAsync(ownerIds, cancellationToken);
 
             var ownerDict = owners.ToDictionary(u => u.Id);
 
