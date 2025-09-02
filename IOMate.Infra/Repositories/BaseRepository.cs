@@ -115,36 +115,25 @@ namespace IOMate.Infra.Repositories
 
         private void AddEvent(T entity, EventType type)
         {
-            var eventsProp = typeof(T).GetProperty("Events");
-            if (eventsProp == null) return;
-
-            var eventType = typeof(EventEntity<>).MakeGenericType(typeof(T));
-            var eventInstance = Activator.CreateInstance(eventType);
-            if (eventInstance == null) return;
-
-            eventType.GetProperty("Id")?.SetValue(eventInstance, Guid.NewGuid());
-            eventType.GetProperty("OwnerId")?.SetValue(eventInstance, CurrentUserContext.User?.Id);
-            eventType.GetProperty("Owner")?.SetValue(eventInstance, CurrentUserContext.User);
-            eventType.GetProperty("Type")?.SetValue(eventInstance, type);
-            eventType.GetProperty("Date")?.SetValue(eventInstance, DateTimeOffset.UtcNow);
-            eventType.GetProperty("EntityId")?.SetValue(eventInstance, entity.Id);
-            eventType.GetProperty("Entity")?.SetValue(eventInstance, entity);
-
-            var eventsList = eventsProp.GetValue(entity) as System.Collections.IList;
-            eventsList?.Add(eventInstance);
-
-            var dbSet = Context.GetType().GetProperties()
-                .FirstOrDefault(p =>
-                    p.PropertyType.IsGenericType &&
-                    p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>) &&
-                    p.PropertyType.GenericTypeArguments[0] == eventType);
-
-            if (dbSet != null)
+            var eventInstance = new EventEntity<T>
             {
-                var set = dbSet.GetValue(Context);
-                var addMethod = set?.GetType().GetMethod("Add");
-                addMethod?.Invoke(set, new[] { eventInstance });
+                Id = Guid.NewGuid(),
+                OwnerId = CurrentUserContext.User?.Id ?? Guid.Empty,
+                Type = type,
+                Date = DateTimeOffset.UtcNow,
+                EntityId = entity.Id,
+                Entity = entity
+            };
+
+            var eventsProp = typeof(T).GetProperty("Events");
+            if (eventsProp != null)
+            {
+                if (eventsProp.GetValue(entity) is IList<EventEntity<T>> eventsList)
+                {
+                    eventsList.Add(eventInstance);
+                }
             }
+            Context.Set<EventEntity<T>>().Add(eventInstance);
         }
     }
 }
