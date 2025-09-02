@@ -1,6 +1,6 @@
 ﻿using IOMate.Domain.Enums;
 
-namespace IOMate.Application.Shared.Dtos
+namespace IOMate.Application.UseCases.Events.GetEvents
 {
     public sealed record GetEventResponseDto
     {

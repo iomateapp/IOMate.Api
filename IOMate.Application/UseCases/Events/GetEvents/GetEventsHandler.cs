@@ -1,22 +1,21 @@
 using AutoMapper;
-using IOMate.Application.Shared.Dtos;
 using IOMate.Domain.Interfaces;
 using MediatR;
 
-namespace IOMate.Application.UseCases.Users.GetUserEvents
+namespace IOMate.Application.UseCases.Events.GetEvents
 {
-    public class GetUserEventsHandler : IRequestHandler<GetUserEventsRequestDto, List<GetEventResponseDto>>
+    public class GetEventsHandler : IRequestHandler<GetEventsRequestDto, List<GetEventResponseDto>>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public GetUserEventsHandler(IUserRepository userRepository, IMapper mapper)
+        public GetEventsHandler(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
         }
 
-        public async Task<List<GetEventResponseDto>> Handle(GetUserEventsRequestDto request, CancellationToken cancellationToken)
+        public async Task<List<GetEventResponseDto>> Handle(GetEventsRequestDto request, CancellationToken cancellationToken)
         {
             var events = await _userRepository.GetUserEventsWithOwnerAsync(request.UserId, cancellationToken);
 

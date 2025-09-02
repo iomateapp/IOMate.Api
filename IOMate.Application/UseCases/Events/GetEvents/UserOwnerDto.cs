@@ -1,4 +1,4 @@
-﻿namespace IOMate.Application.Shared.Dtos
+﻿namespace IOMate.Application.UseCases.Events.GetEvents
 {
     public sealed record UserOwnerDto
     {
