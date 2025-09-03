@@ -1,4 +1,5 @@
 ﻿using IOMate.Application.UseCases.Authentication.Auth;
+using IOMate.Application.UseCases.Authentication.Refresh;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,13 @@ namespace IOMate.Api.Controllers
         {
             var userId = await _mediator.Send(request);
             return Ok(userId);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto request)
+        {
+            var response = await _mediator.Send(request);
+            return Ok(response);
         }
     }
 }

@@ -1,4 +1,3 @@
-
 # IOMate Platform
 
 IOMate is a platform for Robotic Process Automation (RPA), designed to automate repetitive business processes and tasks. The platform was built to be simple to use and highly scalable, making it suitable for organizations of any size. IOMate follows modern software engineering best practices, including the CQRS (Command Query Responsibility Segregation) pattern and Clean Architecture principles, ensuring maintainability, testability, and clear separation of concerns. It provides a modular and extensible architecture, enabling the creation, management, and orchestration of RPA bots and workflows.
@@ -33,11 +32,22 @@ IOMate is a platform for Robotic Process Automation (RPA), designed to automate 
 5. **Generate coverage report:**
    After running the tests, you can generate a coverage report using [reportgenerator](https://github.com/danielpalme/ReportGenerator):
    ```sh
-   reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coveragereport -filefilters:"-**/ServiceExtensions.cs;-**/Program.cs"
+   reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coveragereport -filefilters:"-**/ServiceExtensions.cs;-**/Program.cs;-**/Migrations/**"
    ```
 
-## Migration
-Coming soon.
+## Database Migrations
+
+To create a new migration and update the database, use the following commands:
+
+**Add a new migration:**
+```sh
+dotnet ef migrations add InitialCreate --project IOMate.Infra --startup-project IOMate.Api
+```
+
+**Update the database:**
+```sh
+dotnet ef database update --project IOMate.Infra --startup-project IOMate.Api
+```
 
 ## Contributing
 Contributions are welcome! If you want to propose a new feature, bugfix, or enhancement, please open an issue first using the appropriate template. This helps us discuss and refine the idea or problem before any code is submitted. For all contributions, follow the code style and add tests for new features or bug fixes. Pull requests should reference the related issue whenever possible.

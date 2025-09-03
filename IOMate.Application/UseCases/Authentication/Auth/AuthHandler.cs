@@ -37,11 +37,13 @@ namespace IOMate.Application.UseCases.Authentication.Auth
             if (!_passwordHasher.VerifyPassword(request.Password, existingUser.Password!))
                 throw new BadRequestException(_stringLocalizer["InvalidCredentials"]);
 
-            var token = _jwtTokenGenerator.GenerateToken(existingUser);
+            var accessToken = _jwtTokenGenerator.GenerateToken(existingUser);
+            var refreshToken = _jwtTokenGenerator.GenerateRefreshToken(existingUser);
 
             var response = new AuthResponseDto
             {
-                Token = token
+                Token = accessToken,
+                RefreshToken = refreshToken
             };
             return response;
         }

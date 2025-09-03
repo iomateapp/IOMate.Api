@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Localization;
+﻿using IOMate.Application.Resources;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Globalization;
-using System.Linq;
 using System.Text;
 
 namespace IOMate.Api.Extensions
@@ -74,6 +73,21 @@ namespace IOMate.Api.Extensions
                     ValidIssuer = jwtSettings["Issuer"],
                     ValidAudience = jwtSettings["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]))
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var typ = context.Principal?.FindFirst("typ")?.Value;
+                        if (typ != "access")
+                        {
+                            var localizer = context.HttpContext.RequestServices.GetService(typeof(IStringLocalizer<Messages>)) as IStringLocalizer<Messages>;
+                            var message = localizer?["Unhautorized"] ?? "Invalid token.";
+                            context.Fail(message);
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }

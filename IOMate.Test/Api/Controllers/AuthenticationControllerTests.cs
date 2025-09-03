@@ -1,5 +1,7 @@
 using IOMate.Api.Controllers;
+using IOMate.Application.Shared.Exceptions;
 using IOMate.Application.UseCases.Authentication.Auth;
+using IOMate.Application.UseCases.Authentication.Refresh;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -29,5 +31,37 @@ public class AuthenticationControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(response, okResult.Value);
+    }
+
+    [Fact]
+    public async Task Refresh_ReturnsOk_WithTokens_WhenValid()
+    {
+        // Arrange
+        var request = new RefreshTokenRequestDto { RefreshToken = "valid-refresh-token" };
+        var response = new AuthResponseDto { Token = "access-token", RefreshToken = "refresh-token" };
+        _mediatorMock.Setup(m => m.Send(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.Refresh(request);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(response, okResult.Value);
+    }
+
+    [Fact]
+    public async Task Refresh_ReturnsUnauthorized_WhenHandlerThrowsUnauthorized()
+    {
+        // Arrange
+        var request = new RefreshTokenRequestDto { RefreshToken = "invalid-refresh-token" };
+        _mediatorMock.Setup(m => m.Send(request, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new UnauthorizedException("Token inválido"));
+
+        // Act
+        var exception = await Assert.ThrowsAsync<UnauthorizedException>(() => _controller.Refresh(request));
+
+        // Assert
+        Assert.Equal("Token inválido", exception.Message);
     }
 }

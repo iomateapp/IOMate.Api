@@ -1,5 +1,6 @@
 using IOMate.Api.Extensions;
 using IOMate.Application.Extensions;
+using IOMate.Application.Security;
 using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using IOMate.Infra.Context;
@@ -19,6 +20,9 @@ builder.Services.ConfigureSwagger();
 builder.Services.ConfigureJwt(builder.Configuration);
 
 builder.Services.AddLocalization();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 
 var app = builder.Build();
 

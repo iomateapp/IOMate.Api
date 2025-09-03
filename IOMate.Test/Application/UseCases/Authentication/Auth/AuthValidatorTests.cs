@@ -1,11 +1,11 @@
 using FluentValidation.TestHelper;
 using IOMate.Application.UseCases.Authentication.Auth;
 
-public class AuthenticationValidatorTests : BaseTest
+public class AuthValidatorTests : BaseTest
 {
     private readonly AuthValidator _validator;
 
-    public AuthenticationValidatorTests()
+    public AuthValidatorTests()
     {
         _validator = new AuthValidator(Localizer);
     }
