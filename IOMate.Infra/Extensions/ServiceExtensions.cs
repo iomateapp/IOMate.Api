@@ -1,6 +1,9 @@
-﻿using IOMate.Domain.Interfaces;
+﻿using IOMate.Application.UseCases.Events.GetEvents;
+using IOMate.Domain.Entities;
+using IOMate.Domain.Interfaces;
 using IOMate.Infra.Context;
 using IOMate.Infra.Repositories;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +20,9 @@ namespace IOMate.Infra.Extensions
                 opt.UseNpgsql(connectionString));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddTransient<IRequestHandler<GetEventsRequestDto, List<GetEventResponseDto>>, GetEventsHandler<User>>();
         }
     }
 }

@@ -69,6 +69,22 @@ namespace IOMate.Infra.Repositories
             return events.Cast<object>().ToList();
         }
 
+        public async Task<List<EventEntity<T>>> GetEntityEventsWithOwnerAsync(Guid entityId, CancellationToken cancellationToken)
+        {
+            return await Context.Set<EventEntity<T>>()
+                .Include(e => e.Owner)
+                .Where(e => e.EntityId == entityId)
+                .OrderByDescending(e => e.Date)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<List<User>> GetOwnersByIdsAsync(IEnumerable<Guid> ownerIds, CancellationToken cancellationToken)
+        {
+            return await Context.Users
+                .Where(u => ownerIds.Contains(u.Id))
+                .ToListAsync(cancellationToken);
+        }
+
         private void AddEvent(T entity, EventType type)
         {
             var eventInstance = new EventEntity<T>

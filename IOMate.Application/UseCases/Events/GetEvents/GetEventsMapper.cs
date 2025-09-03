@@ -7,7 +7,7 @@ namespace IOMate.Application.UseCases.Events.GetEvents
     {
         public GetEventsMapper()
         {
-            CreateMap<EventEntity<User>, GetEventResponseDto>();
+            CreateMap(typeof(EventEntity<>), typeof(GetEventResponseDto));
             CreateMap<User, UserOwnerDto>();
         }
     }

@@ -12,5 +12,7 @@ namespace IOMate.Domain.Interfaces
         Task<List<T>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
         Task<int> CountAsync(CancellationToken cancellationToken);
         Task<List<object>> GetEntityEventsAsync(Guid entityId, CancellationToken cancellationToken);
+        Task<List<EventEntity<T>>> GetEntityEventsWithOwnerAsync(Guid entityId, CancellationToken cancellationToken);
+        Task<List<User>> GetOwnersByIdsAsync(IEnumerable<Guid> ownerIds, CancellationToken cancellationToken);
     }
 }
