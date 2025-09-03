@@ -26,7 +26,7 @@ public class EventsControllerTests
             new() { Id = Guid.NewGuid(), Type = EventType.Updated, Date = DateTimeOffset.UtcNow }
         };
 
-        _mediatorMock.Setup(m => m.Send(It.Is<GetEventsRequestDto>(r => r.UserId == entityId), It.IsAny<CancellationToken>()))
+        _mediatorMock.Setup(m => m.Send(It.Is<GetEventsRequestDto>(r => r.EntityId == entityId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(events);
 
         // Act
@@ -44,7 +44,7 @@ public class EventsControllerTests
         var entityId = Guid.NewGuid();
         var events = new List<GetEventResponseDto>();
 
-        _mediatorMock.Setup(m => m.Send(It.Is<GetEventsRequestDto>(r => r.UserId == entityId), It.IsAny<CancellationToken>()))
+        _mediatorMock.Setup(m => m.Send(It.Is<GetEventsRequestDto>(r => r.EntityId == entityId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(events);
 
         // Act
