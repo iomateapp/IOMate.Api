@@ -32,13 +32,15 @@ namespace IOMate.Infra.Repositories
 
         public void Delete(T entity)
         {
+            entity.IsDeleted = true;
             AddEvent(entity, EventType.Deleted);
-            Context.Remove(entity);
+            Context.Entry(entity).State = EntityState.Modified;
         }
 
         public async Task<List<T>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
         {
             return await Context.Set<T>()
+                .Where(e => !e.IsDeleted)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
@@ -46,17 +48,20 @@ namespace IOMate.Infra.Repositories
 
         public async Task<int> CountAsync(CancellationToken cancellationToken)
         {
-            return await Context.Set<T>().CountAsync(cancellationToken);
+            return await Context.Set<T>().CountAsync(e => !e.IsDeleted, cancellationToken);
         }
 
         public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await Context.Set<T>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            return await Context.Set<T>()
+                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted, cancellationToken);
         }
 
         public async Task<List<T>?> GetAllAsync(CancellationToken cancellationToken)
         {
-            return await Context.Set<T>().ToListAsync(cancellationToken);
+            return await Context.Set<T>()
+                .Where(e => !e.IsDeleted)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<List<object>> GetEntityEventsAsync(Guid entityId, CancellationToken cancellationToken)
