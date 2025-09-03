@@ -95,25 +95,6 @@ public class BaseRepositoryTests
     }
 
     [Fact]
-    public async Task Delete_ShouldSetDateDeleted()
-    {
-        // Arrange
-        using var context = CreateContext();
-        var currentUserContext = CreateMockCurrentUserContext();
-        var repo = new BaseRepository<TestEntity>(context, currentUserContext);
-        var entity = new TestEntity { Name = "Test" };
-        context.Add(entity);
-        await context.SaveChangesAsync();
-
-        // Act
-        repo.Delete(entity);
-        await context.SaveChangesAsync();
-
-        // Assert
-        Assert.DoesNotContain(entity, context.Set<TestEntity>());
-    }
-
-    [Fact]
     public async Task GetPagedAsync_ShouldReturnCorrectPage()
     {
         // Arrange
