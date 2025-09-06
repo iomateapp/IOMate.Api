@@ -13,8 +13,12 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { redirect, useRouter, useRouterState } from '@tanstack/react-router'
+import toast from 'react-hot-toast';
 import { z } from 'zod'
-import { useAuth } from '../auth'
+import { useAuth } from '../context/auth'
+import { ApiError } from '../services/errors/types';
+import { useMutation } from '@tanstack/react-query';
+import { loginRequest, type LoginResponse } from '../services/auth';
 
 const fallback = '/dashboard' as const
 
@@ -72,9 +76,6 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
 
 function LoginComponent() {
   const auth = useAuth()
@@ -87,34 +88,34 @@ function LoginComponent() {
   const [passwordError, setPasswordError] = useState(false)
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
   const search = Route.useSearch()
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true)
-    try {
-      event.preventDefault()
-      const data = new FormData(event.currentTarget)
-      const email = data.get('email')
-      const password = data.get('password')
-
-      if (!email || !password) return
-
-      await auth.login(email.toString(), password.toString())
-
-      await router.invalidate()
-
-      // This is just a hack being used to wait for the auth state to update
-      // in a real app, you'd want to use a more robust solution
-      await sleep(1)
-
-      await navigate({ to: search.redirect || fallback })
-    } catch (error) {
-      console.error('Error logging in: ', error)
-    } finally {
-      setIsSubmitting(false)
+  const loginMutation = useMutation<LoginResponse, ApiError, { email: string, password: string}>({
+    mutationFn: ({email, password}) => loginRequest(email, password),
+    onSuccess: (data) => {
+      auth.setToken(data.token, data.refreshToken)
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        console.error('Error logging in: ', error.response)
+        toast.error(error.response.Message)
+      }
     }
+  })
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const email = data.get('email')
+    const password = data.get('password')
+
+    if (!email || !password) return
+
+    await loginMutation.mutateAsync({ email: email.toString(), password: password.toString() })
+
+    await router.invalidate()
+
+    await navigate({ to: search.redirect || fallback })
   }
 
   const validateInputs = () => {
@@ -144,7 +145,7 @@ function LoginComponent() {
     return isValid;
   };
 
-  const isLoggingIn = isLoading || isSubmitting
+  const isLoggingIn = isLoading || loginMutation.isPending;
 
   return (
     <>

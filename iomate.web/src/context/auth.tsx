@@ -1,9 +1,8 @@
 import * as React from 'react'
-import { loginRequest } from './api'
 
 export interface AuthContext {
   isAuthenticated: boolean
-  login: (email: string, password: string) => Promise<void>
+  setToken: (token: string, refreshToken: string) => void
   logout: () => Promise<void>
   token: string | null
 }
@@ -26,28 +25,26 @@ function setStoredToken(token: string | null) {
 
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = React.useState<string | null>(getStoredToken())
+  const [token, localSetToken] = React.useState<string | null>(getStoredToken())
   const isAuthenticated = !!token
 
   const logout = React.useCallback(async () => {
     setStoredToken(null)
-    setToken(null)
+    localSetToken(null)
   }, [])
 
-  const login = React.useCallback(async (email: string, password: string) => {
-    const loginResponse = await loginRequest(email, password)
-    console.log('login response: ', loginResponse)
-
-    setStoredToken(loginResponse.token)
-    setToken(loginResponse.token)
+  const setToken = React.useCallback((token: string, refreshToken: string) => {
+    console.log('Setting token:', { token, refreshToken })
+    setStoredToken(token)
+    localSetToken(token)
   }, [])
 
   React.useEffect(() => {
-    setToken(getStoredToken())
+    localSetToken(getStoredToken())
   }, [])
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, token, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, token, setToken, logout }}>
       {children}
     </AuthContext.Provider>
   )

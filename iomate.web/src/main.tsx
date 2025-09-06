@@ -5,7 +5,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { routeTree } from './routeTree.gen'
 import theme from './theme'
-import { AuthProvider, useAuth } from './auth'
+import { AuthProvider, useAuth } from './context/auth'
+import { Toaster } from 'react-hot-toast';
 
 import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
@@ -52,6 +53,7 @@ if (!rootElement.innerHTML) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <App />
+          <Toaster />
         </ThemeProvider>
       </AuthProvider>
     </StrictMode>,
