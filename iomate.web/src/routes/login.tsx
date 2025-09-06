@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { 
   Box, 
@@ -14,6 +13,8 @@ import {
 import { styled } from '@mui/material/styles';
 import { redirect, useRouter, useRouterState } from '@tanstack/react-router'
 import toast from 'react-hot-toast';
+import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod'
 import { useAuth } from '../context/auth'
 import { ApiError } from '../services/errors/types';
@@ -83,11 +84,6 @@ function LoginComponent() {
   const isLoading = useRouterState({ select: (s) => s.isLoading })
   const navigate = Route.useNavigate()
 
-  const [emailError, setEmailError] = useState(false)
-  const [emailErrorMessage, setEmailErrorMessage] = useState('')
-  const [passwordError, setPasswordError] = useState(false)
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
-  
   const search = Route.useSearch()
 
   const loginMutation = useMutation<LoginResponse, ApiError, { email: string, password: string}>({
@@ -103,47 +99,31 @@ function LoginComponent() {
     }
   })
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    const email = data.get('email')
-    const password = data.get('password')
+  const schema = z.object({
+    email: z.string()
+      .trim()
+      .toLowerCase()
+      .min(1, 'Email is required')
+      .email('Invalid email'),
+    password: z.string()
+      .min(6, 'Password must be at least 6 characters'),
+  })
 
-    if (!email || !password) return
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+    mode: 'onBlur',
+  })
 
-    await loginMutation.mutateAsync({ email: email.toString(), password: password.toString() })
-
+  const onSubmit = handleSubmit(async (values) => {
+    console.log('Submitting', values)
+    await loginMutation.mutateAsync(values)
     await router.invalidate()
-
     await navigate({ to: search.redirect || fallback })
-  }
-
-  const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
-    const password = document.getElementById('password') as HTMLInputElement;
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    return isValid;
-  };
+  })
 
   const isLoggingIn = isLoading || loginMutation.isPending;
 
@@ -166,7 +146,7 @@ function LoginComponent() {
           )}
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={onSubmit}
             noValidate
             sx={{
               display: 'flex',
@@ -178,42 +158,38 @@ function LoginComponent() {
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
                 id="email"
                 type="email"
-                name="email"
                 placeholder="your@email.com"
                 autoComplete="email"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
-                color={emailError ? 'error' : 'primary'}
+                error={!!errors.email}
+                helperText={errors.email ? errors.email.message : ''}
+                {...register('email')} 
               />
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                name="password"
                 placeholder="••••••"
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
+                error={!!errors.password}
+                helperText={errors.password ? errors.password.message : ''}
+                {...register('password')} 
               />
             </FormControl>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
             >
               {isLoggingIn ? 'Loading...' : 'Login'}
             </Button>
