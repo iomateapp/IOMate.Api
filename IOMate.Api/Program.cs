@@ -6,6 +6,7 @@ using IOMate.Application.UseCases.ClaimGroups.AssignToUser;
 using IOMate.Application.UseCases.ClaimGroups.CreateClaimGroup;
 using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
+using IOMate.Domain.Shared;
 using IOMate.Infra.Context;
 using IOMate.Infra.Extensions;
 using MediatR;
@@ -22,6 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureJwt(builder.Configuration);
+builder.Services.ConfigureAuthorization();
 
 builder.Services.AddLocalization();
 
@@ -90,15 +92,15 @@ static async Task CreateDatabaseAsync(WebApplication app)
 
         if (groupResult != null)
         {
-            var claimCommands = new List<AddClaimToGroupCommand>
+            var claimCommands = new List<AddClaimToGroupCommand>();
+
+            foreach (var resource in ApplicationClaims.ResourcesAndActions)
             {
-                new AddClaimToGroupCommand(groupResult.Id, "users", "read"),
-                new AddClaimToGroupCommand(groupResult.Id, "users", "write"),
-                new AddClaimToGroupCommand(groupResult.Id, "users", "delete"),
-                new AddClaimToGroupCommand(groupResult.Id, "events", "read"),
-                new AddClaimToGroupCommand(groupResult.Id, "events", "write"),
-                new AddClaimToGroupCommand(groupResult.Id, "claims", "admin")
-            };
+                foreach (var action in resource.Value)
+                {
+                    claimCommands.Add(new AddClaimToGroupCommand(groupResult.Id, resource.Key, action));
+                }
+            }
 
             foreach (var command in claimCommands)
             {

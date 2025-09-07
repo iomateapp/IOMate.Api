@@ -1,6 +1,9 @@
+using FluentValidation;
+using IOMate.Application.Resources;
 using IOMate.Domain.Entities;
 using IOMate.Domain.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Localization;
 
 namespace IOMate.Application.UseCases.ClaimGroups.AddClaimToGroup
 {
@@ -13,7 +16,9 @@ namespace IOMate.Application.UseCases.ClaimGroups.AddClaimToGroup
         public AddClaimToGroupHandler(
             IClaimGroupRepository claimGroupRepository,
             IBaseRepository<ResourceClaim> resourceClaimRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IValidator<AddClaimToGroupCommand> validator,
+            IStringLocalizer<Messages> stringLocalizer)
         {
             _claimGroupRepository = claimGroupRepository;
             _resourceClaimRepository = resourceClaimRepository;
@@ -25,6 +30,15 @@ namespace IOMate.Application.UseCases.ClaimGroups.AddClaimToGroup
             var claimGroup = await _claimGroupRepository.GetByIdAsync(request.ClaimGroupId, cancellationToken);
             if (claimGroup == null)
                 return false;
+
+            var existingClaims = await _resourceClaimRepository.GetAllAsync(cancellationToken);
+            var hasClaim = existingClaims?.Any(c =>
+                c.ClaimGroupId == request.ClaimGroupId &&
+                c.Resource == request.Resource &&
+                c.Action == request.Action) ?? false;
+
+            if (hasClaim)
+                return true;
 
             var claim = new ResourceClaim
             {

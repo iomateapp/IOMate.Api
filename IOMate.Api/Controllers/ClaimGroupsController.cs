@@ -2,6 +2,7 @@ using IOMate.Application.UseCases.ClaimGroups.AddClaimToGroup;
 using IOMate.Application.UseCases.ClaimGroups.AssignToUser;
 using IOMate.Application.UseCases.ClaimGroups.CreateClaimGroup;
 using IOMate.Application.UseCases.ClaimGroups.GetUserGroups;
+using IOMate.Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -63,6 +64,13 @@ namespace IOMate.Api.Controllers
             var query = new GetUserClaimGroupsQuery(userId);
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+
+        [HttpGet("available-claims")]
+        public ActionResult<List<object>> GetAvailableClaims()
+        {
+            var availableClaims = ApplicationClaims.GetAllResourceActions();
+            return Ok(availableClaims);
         }
     }
 

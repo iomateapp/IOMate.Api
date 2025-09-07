@@ -1,4 +1,5 @@
 ﻿using IOMate.Application.Resources;
+using IOMate.Domain.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
@@ -96,20 +97,16 @@ namespace IOMate.Api.Extensions
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("users:read", policy =>
-                    policy.RequireClaim("users", "read"));
-
-                options.AddPolicy("users:write", policy =>
-                    policy.RequireClaim("users", "write"));
-
-                options.AddPolicy("users:delete", policy =>
-                    policy.RequireClaim("users", "delete"));
-
-                options.AddPolicy("claims:admin", policy =>
-                    policy.RequireClaim("claims", "admin"));
-
-                options.AddPolicy("events:read", policy =>
-                    policy.RequireClaim("events", "read"));
+                foreach (var resourceEntry in ApplicationClaims.ResourcesAndActions)
+                {
+                    string resource = resourceEntry.Key;
+                    foreach (var action in resourceEntry.Value)
+                    {
+                        string policyName = $"{resource}:{action}";
+                        options.AddPolicy(policyName, policy =>
+                            policy.RequireClaim(resource, action));
+                    }
+                }
             });
         }
     }
