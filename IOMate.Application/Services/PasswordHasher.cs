@@ -1,23 +1,19 @@
 using IOMate.Domain.Interfaces;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace IOMate.Application.Services
 {
     public class PasswordHasher : IPasswordHasher
     {
+        private const int WorkFactor = 12;
+
         public string HashPassword(string password)
         {
-            using var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
+            return BCrypt.Net.BCrypt.HashPassword(password, WorkFactor);
         }
 
         public bool VerifyPassword(string password, string passwordHash)
         {
-            var hashOfInput = HashPassword(password);
-            return hashOfInput == passwordHash;
+            return BCrypt.Net.BCrypt.Verify(password, passwordHash);
         }
     }
 }
