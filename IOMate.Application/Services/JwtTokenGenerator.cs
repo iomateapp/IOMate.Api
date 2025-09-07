@@ -12,10 +12,12 @@ namespace IOMate.Application.Services
     public class JwtTokenGenerator : IJwtTokenGenerator
     {
         private readonly IConfiguration _configuration;
+        private readonly IClaimGroupRepository _claimGroupRepository;
 
-        public JwtTokenGenerator(IConfiguration configuration)
+        public JwtTokenGenerator(IConfiguration configuration, IClaimGroupRepository claimGroupRepository)
         {
             _configuration = configuration;
+            _claimGroupRepository = claimGroupRepository;
         }
 
         public string GenerateToken(User user)
@@ -26,21 +28,30 @@ namespace IOMate.Application.Services
 
         private string GenerateJwt(User user, string typ, DateTime expires)
         {
+            var claimGroups = _claimGroupRepository.GetUserClaimGroupsAsync(user.Id, CancellationToken.None)
+                .GetAwaiter().GetResult();
+
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["Secret"];
             var issuer = jwtSettings["Issuer"];
             var audience = jwtSettings["Audience"];
+
+            var claimsByResource = claimGroups
+                .SelectMany(cg => cg.Claims)
+                .GroupBy(c => c.Resource)
+                .ToDictionary(g => g.Key, g => g.Select(c => c.Action).ToArray());
 
             var userToSerialize = new
             {
                 user.Id,
                 user.FirstName,
                 user.LastName,
-                user.Email
+                user.Email,
+                Claims = claimsByResource
             };
             var userJson = JsonSerializer.Serialize(userToSerialize);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
@@ -48,6 +59,17 @@ namespace IOMate.Application.Services
                 new Claim("typ", typ),
                 new Claim("user", userJson)
             };
+
+            if (typ == "access")
+            {
+                foreach (var resource in claimsByResource)
+                {
+                    foreach (var action in resource.Value)
+                    {
+                        claims.Add(new Claim($"{resource.Key}", action));
+                    }
+                }
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

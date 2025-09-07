@@ -108,9 +108,9 @@ namespace IOMate.Infra.Repositories
                 if (eventsProp.GetValue(entity) is IList<EventEntity<T>> eventsList)
                 {
                     eventsList.Add(eventInstance);
+                    Context.Set<EventEntity<T>>().Add(eventInstance);
                 }
             }
-            Context.Set<EventEntity<T>>().Add(eventInstance);
         }
     }
 }

@@ -91,6 +91,27 @@ namespace IOMate.Api.Extensions
                 };
             });
         }
+
+        public static void ConfigureAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("users:read", policy =>
+                    policy.RequireClaim("users", "read"));
+
+                options.AddPolicy("users:write", policy =>
+                    policy.RequireClaim("users", "write"));
+
+                options.AddPolicy("users:delete", policy =>
+                    policy.RequireClaim("users", "delete"));
+
+                options.AddPolicy("claims:admin", policy =>
+                    policy.RequireClaim("claims", "admin"));
+
+                options.AddPolicy("events:read", policy =>
+                    policy.RequireClaim("events", "read"));
+            });
+        }
     }
 
     public class AcceptLanguageHeaderOperationFilter : Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter

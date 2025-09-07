@@ -23,6 +23,10 @@ namespace IOMate.Infra.Extensions
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddTransient<IRequestHandler<GetEventsRequestDto, List<GetEventResponseDto>>, GetEventsHandler<User>>();
+
+            services.AddScoped<IClaimGroupRepository, ClaimGroupRepository>();
+            services.AddScoped<IBaseRepository<ResourceClaim>, BaseRepository<ResourceClaim>>();
+            services.AddScoped<IBaseRepository<UserClaimGroup>, BaseRepository<UserClaimGroup>>();
         }
     }
 }

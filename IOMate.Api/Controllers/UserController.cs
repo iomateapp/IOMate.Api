@@ -21,6 +21,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "users:read")]
     public async Task<ActionResult<List<GetAllUsersResponseDto>>> GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
@@ -32,6 +33,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "users:write")]
     public async Task<IActionResult> Create(CreateUserRequestDto request)
     {
         var userId = await _mediator.Send(request);
@@ -39,6 +41,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = "users:write")]
     public async Task<ActionResult<UpdateUserResponseDto>> Update(Guid id, UpdateUserRequestDto request, CancellationToken cancellationToken)
     {
         var command = new UpdateUserCommand(id, request);
@@ -47,6 +50,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "users:delete")]
     public async Task<ActionResult> Delete(Guid? id, CancellationToken cancellationToken)
     {
         if (id is null)
@@ -59,6 +63,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = "users:read")]
     public async Task<ActionResult<GetUserByIdResponseDto>> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new GetUserByIdRequestDto(id);

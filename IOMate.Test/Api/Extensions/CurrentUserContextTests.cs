@@ -1,5 +1,6 @@
 ﻿using IOMate.Api.Extensions;
 using IOMate.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System.Security.Claims;
@@ -9,10 +10,11 @@ public class CurrentUserContextTests
 {
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
     private readonly CurrentUserContext _currentUserContext;
+    private readonly Mock<IMediator> _mediatorMock = new();
 
     public CurrentUserContextTests()
     {
-        _currentUserContext = new CurrentUserContext(_httpContextAccessorMock.Object);
+        _currentUserContext = new CurrentUserContext(_httpContextAccessorMock.Object, _mediatorMock.Object);
     }
 
     [Fact]

@@ -1,6 +1,8 @@
 using IOMate.Application.Services;
 using IOMate.Domain.Entities;
+using IOMate.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -20,7 +22,8 @@ public class JwtTokenGeneratorTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
-        var generator = new JwtTokenGenerator(configuration);
+        var mockClaimGroupRepository = new Mock<IClaimGroupRepository>();
+        var generator = new JwtTokenGenerator(configuration, mockClaimGroupRepository.Object);
         var user = new User { Id = Guid.NewGuid(), Email = "user@test.com" };
 
         // Act
@@ -45,7 +48,8 @@ public class JwtTokenGeneratorTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
-        var generator = new JwtTokenGenerator(configuration);
+        var mockClaimGroupRepository = new Mock<IClaimGroupRepository>();
+        var generator = new JwtTokenGenerator(configuration, mockClaimGroupRepository.Object);
         var user = new User { Id = Guid.NewGuid(), Email = "user@test.com" };
 
         // Act
@@ -74,7 +78,8 @@ public class JwtTokenGeneratorTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
-        var generator = new JwtTokenGenerator(configuration);
+        var mockClaimGroupRepository = new Mock<IClaimGroupRepository>();
+        var generator = new JwtTokenGenerator(configuration, mockClaimGroupRepository.Object);
         var user = new User { Id = Guid.NewGuid(), Email = "user@test.com" };
         var refreshToken = generator.GenerateRefreshToken(user);
 
