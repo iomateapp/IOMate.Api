@@ -8,7 +8,7 @@ import {
   TextField, 
   Typography, 
   Stack, 
-  Card as MuiCard 
+  Card as MuiCard, 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { redirect, useRouter, useRouterState } from '@tanstack/react-router'

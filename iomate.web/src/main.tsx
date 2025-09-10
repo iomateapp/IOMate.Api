@@ -2,9 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { CssBaseline, ThemeProvider } from '@mui/material'
+import { CssBaseline } from '@mui/material'
 import { routeTree } from './routeTree.gen'
-import theme from './theme'
 import { AuthProvider, useAuth } from './context/auth'
 import { Toaster } from 'react-hot-toast';
 
@@ -12,6 +11,7 @@ import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
+import AppTheme from './theme/AppTheme'
 
 const queryClient = new QueryClient()
 
@@ -50,11 +50,11 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <AuthProvider>
-        <ThemeProvider theme={theme}>
+        <AppTheme>
           <CssBaseline />
           <App />
           <Toaster />
-        </ThemeProvider>
+        </AppTheme>
       </AuthProvider>
     </StrictMode>,
   )
